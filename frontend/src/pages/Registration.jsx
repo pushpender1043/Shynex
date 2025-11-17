@@ -1,6 +1,6 @@
 import React from 'react';
 import {useState} from 'react';
-import logo from '../assets/vcart_logo.png';
+import logo from '../assets/sv_logo.png';
 import { useNavigate } from 'react-router-dom';
 import google from '../assets/google.webp';
 import { IoIosEye } from "react-icons/io";

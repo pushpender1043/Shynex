@@ -1,32 +1,44 @@
 import React from 'react'
 
 function NewLetterBox() {
-    const handleSubmit=(e)=>{
+    const handleSubmit = (e) => {
         e.preventDefault();
-
     }
-  return (
 
-    <div className='w-[100%] h-[40vh] bg-gradient-to-l from-[#F2E9E4] to-[#F7F4EA] flex items-center justify-start gap-[10px] flex-col'>
-        <p className='md:text-[30px] text-[20px]  text-[black] font-semibold px-[20px]'>
-            Subscribe now & get 20% off
-        </p>
-        <p className='md:text-[18px] text-[14px] text-center text-black font-semibold px-[20px]'>
-            Subscibe now and enjoy exclusive savings, special deals,and early access to new collections.
-        </p>
-        <form action="" onSubmit={handleSubmit} className='w-[100%] h-[30%] md:h-[50%] flex items-center justify-center mt-[20px] gap-[20px] px-[20px]'>
-            <input type="text" className='placeholder:text-[black] bg-slate-300 w-[600px] max-w-[60%] h-[40px] px-[20px] rounded-lg shadow-sm shadow-black' placeholder='Enter Your Email' required />
-            <button type='submit'
-  className="text-[15px] md:text-[16px] px-[10px] md:px-[30px] py-[12px] md:py-[10px]cursor-pointer  bg-[#2e3030c9] hover:bg-slate-500  text-white  flex items-center justify-center gap-[20px]  border-[1px] border-[#80808049] rounded-lg shadow-sm shadow-black"
->
-  Subscribe
-</button>
+    return (
+        <div className='w-full h-[40vh] bg-gradient-to-l from-[#0f1c2c] to-[#1f3a40] flex flex-col items-center justify-center gap-4 px-6 py-8'>
+            
+            {/* Heading */}
+            <p className='md:text-[30px] text-[20px] text-[white] font-semibold text-center'>
+                Subscribe now & get 20% off
+            </p>
 
-        </form>
+            {/* Subheading */}
+            <p className='md:text-[18px] text-[14px] text-center text-white font-medium px-4'>
+                Subscribe now and enjoy exclusive savings, special deals, and early access to new collections.
+            </p>
 
+            {/* Form */}
+            <form 
+                onSubmit={handleSubmit} 
+                className='w-full flex flex-col md:flex-row items-center justify-center gap-4 mt-4'
+            >
+                <input 
+                    type="email"
+                    className='placeholder-gray-400 bg-gray-100 w-full md:w-[400px] h-[45px] px-4 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-400 shadow-sm'
+                    placeholder='Enter Your Email' 
+                    required 
+                />
+                <button 
+                    type='submit'
+                    className='w-full md:w-auto px-6 py-3 bg-gray-700 hover:bg-gray-600 text-white rounded-lg shadow-md transition-colors duration-300'
+                >
+                    Subscribe
+                </button>
+            </form>
 
-    </div>
-  )
+        </div>
+    )
 }
 
-export default NewLetterBox
+export default NewLetterBox;

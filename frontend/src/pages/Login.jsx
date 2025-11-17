@@ -1,6 +1,6 @@
 import React from 'react'
 import {useState,useContext} from 'react';
-import logo from '../assets/vcart_logo.png';
+import logo from '../assets/sv_logo.png';
 import { useNavigate } from 'react-router-dom';
 import google from '../assets/google.webp';
 import { IoIosEye } from "react-icons/io";
@@ -67,13 +67,13 @@ function Login() {
         onClick={() => navigate("/")}
       >
         <img className='w-[40px]' src={logo} alt="logo" />
-        <h1 className='text-[22px] font-sans font-bold tracking-wide'>OneCart</h1>
+        <h1 className='text-[22px] font-sans font-bold tracking-wide'>ShopVerse</h1>
       </div>
 
       {/* Welcome Text */}
       <div className='w-full h-[100px] flex flex-col items-center justify-center gap-[10px]'>
         <span className='text-[25px] font-semibold'>Login Page</span>
-        <span className='text-[16px] text-gray-300'>Welcome to OneCart, Place Your Order</span>
+        <span className='text-[16px] text-gray-300'>Welcome to ShopVerse, Place Your Order</span>
       </div>
 
       {/* Registration Form */}

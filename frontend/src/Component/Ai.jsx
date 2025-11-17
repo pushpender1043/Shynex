@@ -1,5 +1,5 @@
 import React from 'react'
-import ai from '../assets/ai.webp'
+import ai from '../assets/ai.png'
 import { useContext } from 'react'
 import { ShopDataContext } from '../Context/ShopContext'
 import {useNavigate} from 'react-router-dom'
