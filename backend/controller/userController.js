@@ -29,7 +29,7 @@ const getCurrentAdmin=async(req,res)=>{
 
 
     }
-    return res.status(201).json({
+    return res.status(200).json({
         email:adminEmail,
         role:"admin"
     })

@@ -43,9 +43,21 @@ function UserContext({children}) {
 
 
 
+    // useEffect(()=>{
+    //     getCurrentUser()
+    // },[])
+    // UserContext.jsx (Fixed useEffect)
+
+// ...
+
     useEffect(()=>{
-        getCurrentUser()
-    },[])
+        // Only attempt to fetch the user if the serverUrl is available
+        if (serverUrl) {
+            getCurrentUser()
+        }
+    },[serverUrl]) // FIX: Added serverUrl dependency.
+
+// ...
 
     let value={
         userData,setUserData,getCurrentUser

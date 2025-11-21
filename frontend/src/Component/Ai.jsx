@@ -1,107 +1,183 @@
-import React from 'react'
-import ai from '../assets/ai.png'
-import { useContext } from 'react'
-import { ShopDataContext } from '../Context/ShopContext'
-import {useNavigate} from 'react-router-dom'
-import { toast } from 'react-toastify'
-import open from '../assets/open.mp3'
-import { useState } from 'react'
+import React, { useContext, useState, useRef, useEffect, useCallback } from "react";
+import ai from "../assets/ai.png";
+import { ShopDataContext } from "../Context/ShopContext";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import open from "../assets/open.mp3";
 
 function Ai() {
-    let {showSearch,setShowSearch}=useContext(ShopDataContext)
-    let navigate=useNavigate()
-    let [activeAi,setActiveAi]=useState(false)
-    let openingSound=new Audio(open)
+  const { showSearch, setShowSearch } = useContext(ShopDataContext);
+  const navigate = useNavigate();
+  const [activeAi, setActiveAi] = useState(false);
 
-    function speak(message){
-        let utterence=new SpeechSynthesisUtterance(message)
-        window.speechSynthesis.speak(utterence)
+  // Persistent reference for Audio
+  const openingSoundRef = useRef(null);
+  useEffect(() => {
+    // Initializes Audio once
+    openingSoundRef.current = new Audio(open);
+  }, []);
 
+  // Memoized Speak function (Stable)
+  const speak = useCallback((message) => {
+    try {
+      const utter = new SpeechSynthesisUtterance(message);
+      // Cancel any ongoing speech to avoid queueing
+      window.speechSynthesis.cancel();
+      window.speechSynthesis.speak(utter);
+    } catch (error) {
+      console.log("Speech synthesis failed:", error);
+    }
+  }, []);
+
+  // Persistent SpeechRecognition instance reference
+  const recognitionRef = useRef(null);
+
+  useEffect(() => {
+    const SpeechRecognition =
+      window.SpeechRecognition || window.webkitSpeechRecognition;
+
+    if (!SpeechRecognition) {
+      toast.error(
+        "Voice commands need Chrome, Edge or Opera. Try enabling mic permissions."
+      );
+      return;
     }
 
+    // Initialize recognition object
+    const recognition = new SpeechRecognition();
+    recognition.continuous = false;
+    recognition.interimResults = false;
+    // Setting language can improve accuracy
+    recognition.lang = "en-IN"; 
+    
+    // Store the object in the ref for persistence
+    recognitionRef.current = recognition;
 
+    // --- EVENT HANDLERS (Defined inside useEffect to capture latest dependencies) ---
+    recognition.onresult = (e) => {
+      const transcript = e.results[0][0].transcript.toLowerCase().trim();
 
+      console.log("Voice command received:", transcript);
 
-    const speechRecognition=window.SpeechRecognition||window.webkitSpeechRecognition
-    const recognition=new speechRecognition()
-    if(!recognition){
-        console.log("Not Supported")
+      // --- ALL COMMANDS ---
+      if (transcript.includes("open search") || transcript.includes("search open")) {
+        speak("Opening Search");
+        setShowSearch(true);
+        navigate("/collection");
+      } 
+      else if (transcript.includes("close search")) {
+        speak("Closing Search");
+        setShowSearch(false);
+      } 
+      else if (transcript.includes("collection") || transcript.includes("products")) {
+        speak("Opening collection page");
+        navigate("/collection");
+      }
+      else if (transcript.includes("about")) {
+        speak("Opening About page");
+        navigate("/about");
+        setShowSearch(false);
+      }
+      else if (transcript.includes("home")) {
+        speak("Going to home page");
+        navigate("/");
+        setShowSearch(false); // Added for safety
+      }
+      else if (transcript.includes("cart") || transcript.includes("kaat") || transcript.includes("caat")) {
+        speak("Opening your cart");
+        navigate("/cart");
+        setShowSearch(false); // Added for safety
+      }
+      else if (transcript.includes("contact")) {
+        speak("Opening contact page");
+        navigate("/contact");
+        setShowSearch(false);
+      }
+      else if (transcript.includes("order") || transcript.includes("my orders")) {
+        speak("Opening your orders page");
+        navigate("/order");
+        setShowSearch(false);
+      }
+      else {
+        toast.error(`Command not recognized: "${transcript}"`);
+        speak("I did not understand. Please try again.");
+      }
+    };
+
+    recognition.onerror = (event) => {
+      console.log("Recognition Error:", event.error);
+
+      if (event.error === "not-allowed") {
+        toast.error("Microphone permission denied.");
+        speak("I need microphone permission to work.");
+      } else if (event.error === "no-speech") {
+        speak("I did not hear anything.");
+      } else if (event.error === "audio-capture") {
+        speak("I cannot detect any microphone.");
+      }
+      setActiveAi(false);
+    };
+
+    recognition.onend = () => {
+      setActiveAi(false);
+    };
+    
+    // Cleanup function: Stops recognition and removes handlers when component unmounts
+    return () => {
+        if (recognitionRef.current) {
+            recognitionRef.current.onresult = null;
+            recognitionRef.current.onerror = null;
+            recognitionRef.current.onend = null;
+            recognitionRef.current.stop();
+        }
+    };
+    
+    // CRITICAL FIX: Dependencies ensure handlers always use the latest state/props
+  }, [navigate, speak, setShowSearch, showSearch]); 
+
+  // Start listening function
+  const startRecognition = async () => {
+    try {
+      // Play sound using ref and handle potential browser autoplay block
+      openingSoundRef.current.play().catch(()=>{});
+    } catch (err) {
+      console.log("Autoplay blocked, attempting silent start.");
     }
 
-    recognition.onresult=(e)=>{
-        console.log(e)
-        const transcript=e.results[0][0].transcript.trim();
-        if(transcript.toLowerCase().includes("search") && transcript.toLowerCase().includes("open") && !showSearch){
-            speak("Opening Search")
-            setShowSearch(true)
-            navigate("/collection")
-        }
-        else  if(transcript.toLowerCase().includes("search") && transcript.toLowerCase().includes("close") && showSearch){
-            speak("Closing Search")
-            setShowSearch(false)
-          
-        }
-        else  if(transcript.toLowerCase().includes("collection") || transcript.toLowerCase().includes("collections") || transcript.toLowerCase().includes("products") || transcript.toLowerCase().includes("products")){
-            speak("Opening Collection Page")
-            navigate("/collection")
-        }
-        else if(transcript.toLowerCase().includes("about") || transcript.toLowerCase().includes("aboutPage")){
-            speak("Opening about Page")
-            navigate("/about")
-            setShowSearch(false)
-        }
-
-         else if(transcript.toLowerCase().includes("home") || transcript.toLowerCase().includes("homePage")){
-            speak("Opening home Page")
-            navigate("/")
-            setShowSearch(false)
-        }
-         else if(transcript.toLowerCase().includes("cart") || transcript.toLowerCase().includes("kaat") || transcript.toLowerCase().includes("caat")){
-            speak("Opening Your cart")
-            navigate("/cart")
-            setShowSearch(false)
-        }
-            else if(transcript.toLowerCase().includes("contact") ){
-            speak("Opening contact page")
-            navigate("/contact")
-            setShowSearch(false)
-        }
-
-            else if(transcript.toLowerCase().includes("order") || transcript.toLowerCase().includes("myorders") || transcript.toLowerCase().includes("orders")  || transcript.toLowerCase().includes("my order")){
-            speak("Opening orders page")
-            navigate("/order")
-            setShowSearch(false)
-        }
-        else{
-            toast.error("Try Again");
-            navigate('/')
-        }
-        
+    if (recognitionRef.current) {
+      setActiveAi(true);
+      // Start the recognition instance stored in the ref
+      recognitionRef.current.start();
+    } else {
+      toast.error("Speech Recognition not supported.");
     }
-    recognition.onend=()=>{
-        setActiveAi(false)
-    }
+  };
+
   return (
-    <div className='fixed lg:bottom-[20px] md:bottom-[40px] bottom-[80px] left-[2%]' onClick={()=>{recognition.start();openingSound.play() 
-    setActiveAi(true)}}>
-       <img 
-  src={ai} 
-  alt="" 
-  className={`w-[100px] cursor-pointer 
-    ${activeAi 
-      ? 'translate-x-[10%] translate-y-[-10%] scale-125' 
-      : 'translate-x-[0] translate-y-[0] scale-100'} 
-    transition-transform`} 
-  style={{ 
-    filter: `${activeAi 
-      ? "drop-shadow(0px 0px 30px #00d2fc)" 
-      : "drop-shadow(0px 0px 20px black)"}` 
-  }} 
-/>
-
-      
+    <div
+      // Positioning to stack ABOVE the Chatbot (bottom: ~400px + 50px offset)
+      className="fixed bottom-[80px] right-[17px] z-50"
+      onClick={startRecognition}
+    >
+      <img
+        src={ai}
+        alt="AI"
+        className={`w-[100px] cursor-pointer
+          ${
+            activeAi
+              ? "translate-x-[10%] translate-y-[-10%] scale-125"
+              : "scale-100"
+          }
+          transition-transform duration-300
+        `}
+        style={{
+          filter: activeAi
+            ? "drop-shadow(0px 0px 30px #00d2fc)"
+            : "drop-shadow(0px 0px 20px black)",
+        }}
+      />
     </div>
-  )
+  );
 }
 
-export default Ai
+export default Ai;

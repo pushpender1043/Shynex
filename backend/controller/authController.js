@@ -24,7 +24,7 @@ const Registration=async(req,res)=>{
         res.cookie("token",token,{
             httpOnly:true,
             secure:false,
-            sameSite:"Lax",
+            sameSite:"Strict",
             maxAge:7*24*60*60*1000
         });
       
@@ -48,15 +48,15 @@ const login=async(req,res)=>{
         }
         let isMatch=await bcrypt.compare(password,user.password);
         if(!isMatch){
-            return res.status(400).json({message:"Enter Valid mail"});
+            return res.status(400).json({message:"Incorrect password"});
              
         }
          let token=await genToken(user._id);
         res.cookie("token",token,{
             httpOnly:true,
             secure:false,
-            samesite:"Strict",
-            maxage:7*24*60*60*1000
+            sameSite:"Lax",
+            maxAge:7*24*60*60*1000
         });
         return res.status(201).json({message:"Login Sucessfull!"});
 
@@ -95,7 +95,7 @@ const googleLogin=async(req,res)=>{
         res.cookie("token",token,{
             httpOnly:true,
             secure:false,
-            samesite:"Strict",
+            sameSite:"Strict",
             maxage:7*24*60*60*1000
         });
         return res.status(200).json(user);
@@ -117,7 +117,7 @@ const adminLogin=async(req,res)=>{
             res.cookie("token",token,{
             httpOnly:true,
             secure:false,
-            samesite:"Strict",
+            sameSite:"Strict",
             maxage:1*24*60*60*1000
         });
         return res.status(200).json(token);

@@ -16,6 +16,7 @@ import Order from './pages/Order';
 import NotFound from './pages/NotFound';
 import Ai from './Component/Ai';
 import { ToastContainer, toast } from 'react-toastify';
+import ChatWidget from './Component/ChatbotWidget';
 
 
 function App() {
@@ -87,6 +88,7 @@ function App() {
        <Route path ="*" element={<NotFound/>}/>
        </Routes>
       <Ai/>
+      <ChatWidget/>
   
       </>
   )

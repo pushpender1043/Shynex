@@ -154,17 +154,36 @@ const getCartAmount=()=>{
  return totalAmount;
 }
 
+    // useEffect(()=>{
+    //     getProducts()
+
+    // },[])
+
+    //   useEffect(()=>{
+    //     getUserCart()
+
+    // },[])
+
+// ShopContext.jsx (Fixed useEffects)
+
+// ...
+
     useEffect(()=>{
         getProducts()
+    },[serverUrl]) 
 
-    },[])
+    useEffect(()=>{
+        
+        if(userData){
+            getUserCart()
+        }
+        else{
+            
+            setCartItem({})
+        }
+    },[userData, serverUrl]) 
 
-      useEffect(()=>{
-        getUserCart()
-
-    },[])
-
-
+// ...
 
 
     let value={
