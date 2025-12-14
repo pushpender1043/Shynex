@@ -3,7 +3,7 @@ import axios from 'axios';
 import { BsChatQuoteFill, BsX, BsSend, BsRobot, BsLightningFill } from "react-icons/bs"; 
 import { motion, AnimatePresence } from "framer-motion";
 
-const BACKEND_URL = 'http://localhost:8000/api/chatbot/message'; 
+const BACKEND_URL = 'https://shynex.onrender.com/api/chatbot/message'; 
 
 // ✅ Common Customer Problems (Quick Prompts)
 const QUICK_ACTIONS = [

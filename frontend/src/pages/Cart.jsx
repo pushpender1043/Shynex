@@ -3,7 +3,7 @@ import Title from '../Component/Title';
 import { ShopDataContext } from '../Context/ShopContext';
 import { useNavigate } from 'react-router-dom';
 import { RiDeleteBinLine } from "react-icons/ri"; // Cleaner Icon
-import CartTotal from '../Component/cartTotal';
+import CartTotal from '../Component/CartTotal';
 import { FaArrowRight, FaLock } from "react-icons/fa";
 import { motion, AnimatePresence } from 'framer-motion';
 
