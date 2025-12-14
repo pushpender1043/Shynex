@@ -44,7 +44,7 @@ app.use("/api/order",orderRoutes)
 
 
 
-
+app.get('/', (req, res) => res.send('API is running'));
 
 app.post('/api/chatbot/message', async (req, res) => {
     try {
