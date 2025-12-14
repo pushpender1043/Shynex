@@ -1,175 +1,228 @@
 import React, { useContext, useState, useEffect } from 'react'
 import { useParams } from 'react-router-dom'
 import { ShopDataContext } from '../Context/ShopContext'
-import { FaStar } from "react-icons/fa";
-import { FaStarHalfStroke } from "react-icons/fa6";
+import { FaStar, FaTruck, FaUndo, FaShieldAlt, FaRuler, FaChevronDown } from "react-icons/fa";
 import RelatedProduct from '../Component/RelatedProduct';
+import { motion, AnimatePresence } from 'framer-motion';
 
 function ProductDetails() {
   let { productId } = useParams()
-  let { products, currency ,addToCart} = useContext(ShopDataContext)
+  let { products, currency, addToCart } = useContext(ShopDataContext)
   let [productData, setProductData] = useState(false)
+  
+  // Image & Size State
   const [image, setImage] = useState('')
   const [image1, setImage1] = useState('')
   const [image2, setImage2] = useState('')
   const [image3, setImage3] = useState('')
   const [image4, setImage4] = useState('')
   const [size, setSize] = useState('')
-
-  // Inline error message
   const [sizeError, setSizeError] = useState(false)
+  
+  // Accordion State for Description/Reviews
+  const [openSection, setOpenSection] = useState('description');
+
+  // Zoom State
+  const [zoomStyle, setZoomStyle] = useState({ transformOrigin: 'center', transform: 'scale(1)' });
 
   const fetchProductData = async () => {
     products.map((item) => {
       if (item._id === productId) {
         setProductData(item)
-        setImage1(item.image1)
-        setImage2(item.image2)
-        setImage3(item.image3)
-        setImage4(item.image4)
+        setImage1(item.image1); setImage2(item.image2);
+        setImage3(item.image3); setImage4(item.image4);
         setImage(item.image1)
         return null
       }
     })
   }
 
-  useEffect(() => {
-    fetchProductData()
-  }, [productId, products])
+  useEffect(() => { fetchProductData() }, [productId, products])
 
-  return productData ? (
-    <div>
-      <div className="w-full min-h-screen bg-gradient-to-l from-[#f9f9f9] to-[#eaeaea] 
-flex flex-col lg:flex-row items-center lg:items-start justify-start gap-6 
-px- py-6 md:px-8 mt-10 md:mt-15">
+  // Zoom Logic
+  const handleMouseMove = (e) => {
+    const { left, top, width, height } = e.target.getBoundingClientRect();
+    const x = ((e.clientX - left) / width) * 100;
+    const y = ((e.clientY - top) / height) * 100;
+    setZoomStyle({ transformOrigin: `${x}% ${y}%`, transform: 'scale(2)' }); // Slight less zoom for elegance
+  };
 
-        {/* Left Section */}
-        <div className="lg:w-1/2 w-full flex flex-col-reverse lg:flex-row items-center justify-center lg:justify-start gap-4 md:gap-6 ">
-          {/* Thumbnails */}
-          <div className="lg:w-1/5 md:w-3/4 w-full flex lg:flex-col flex-row gap-3 md:gap-4 overflow-x-auto lg:overflow-visible">
-            {[image1, image2, image3, image4].filter(Boolean).map((img, idx) => (
-              <div
-                key={idx}
-                className="w-[70px] h-[70px] sm:w-[90px] sm:h-[90px] md:w-[100px] md:h-[100px] bg-gray-200 border border-gray-300 rounded-md flex-shrink-0"
-              >
-                <img
-                  src={img}
-                  alt={`thumbnail-${idx}`}
-                  className="w-full h-full cursor-pointer rounded-md object-cover"
+  const handleMouseLeave = () => {
+    setZoomStyle({ transformOrigin: 'center', transform: 'scale(1)' });
+  };
+
+  if (!productData) return <div className="min-h-screen bg-[#050505]" />;
+
+  return (
+    <div className="w-full min-h-screen bg-[#050505] text-white font-sans pt-[100px]">
+      
+      {/* --- BREADCRUMB (Context) --- */}
+      <div className='max-w-[1800px] mx-auto px-6 py-4 text-xs text-gray-500 uppercase tracking-widest border-b border-white/5'>
+         Home / {productData.category} / <span className='text-[#d4af37]'>{productData.name}</span>
+      </div>
+
+      <div className="max-w-[1800px] mx-auto px-0 md:px-6 lg:px-12 py-10">
+        <div className="flex flex-col lg:flex-row gap-12 xl:gap-24 relative">
+
+          {/* --- LEFT: IMMERSIVE GALLERY (60% Width) --- */}
+          <div className="w-full lg:w-[60%] flex flex-col-reverse md:flex-row gap-4">
+            
+            {/* Vertical Thumbnails (Hidden on small mobile) */}
+            <div className="hidden md:flex flex-col gap-4 w-[100px] h-fit sticky top-[120px]">
+              {[image1, image2, image3, image4].filter(Boolean).map((img, idx) => (
+                <div
+                  key={idx}
                   onClick={() => setImage(img)}
-                />
-              </div>
-            ))}
-          </div>
-
-          {/* Main Image */}
-          <div className="lg:w-4/5 w-full h-[250px] sm:h-[320px] md:h-[420px] lg:h-[500px] rounded-md overflow-hidden bg-gray-100">
-            <img
-              src={image}
-              alt={productData?.name || "Product"}
-              className="w-full h-full object-contain rounded-md"
-            />
-          </div>
-        </div>
-
-        {/* Right Section */}
-        <div className="lg:w-1/2 w-full flex flex-col items-start gap-4 px-2 sm:px-4 md:px-6">
-          <h1 className="text-2xl sm:text-3xl md:text-4xl font-semibold text-gray-800">
-            {productData.name.toUpperCase()}
-          </h1>
-
-          {/* Rating */}
-          <div className="flex items-center gap-1">
-            <FaStar className="text-base sm:text-lg md:text-xl fill-yellow-500" />
-            <FaStar className="text-base sm:text-lg md:text-xl fill-yellow-500" />
-            <FaStar className="text-base sm:text-lg md:text-xl fill-yellow-500" />
-            <FaStar className="text-base sm:text-lg md:text-xl fill-yellow-500" />
-            <FaStarHalfStroke className="text-base sm:text-lg md:text-xl fill-yellow-500" />
-            <p className="text-xs sm:text-sm md:text-base font-semibold text-gray-700 pl-2">
-              (124)
-            </p>
-          </div>
-
-          {/* Price */}
-          <p className="text-lg sm:text-xl md:text-2xl font-semibold text-gray-900">
-            {currency}{productData.price}
-          </p>
-
-          {/* Description */}
-          <p className="w-full md:w-3/4 text-sm sm:text-base md:text-lg text-gray-700">
-            {productData.description} and stylish clothes. Easy to wash, Modern Fit, Super Comfortable, and designed for effortless style.
-          </p>
-
-          {/* Sizes */}
-          <div className="flex flex-col gap-3 mt-4">
-            <p className="text-base sm:text-lg md:text-xl font-semibold text-gray-800">Select Size</p>
-            <div className="flex gap-2 flex-wrap">
-              {productData.sizes.map((item, index) => (
-                <button
-                  key={index}
-                  onClick={() => { setSize(item); setSizeError(false) }}
-                  className={`border py-1.5 sm:py-2 px-3 sm:px-4 bg-gray-200 rounded-md transition ${
-                    item === size ? 'bg-gray-800 text-white text-base sm:text-lg' : ''
+                  className={`w-full aspect-[3/4] cursor-pointer border transition-all duration-500 ${
+                    image === img ? 'border-[#d4af37] opacity-100' : 'border-transparent opacity-50 hover:opacity-100'
                   }`}
                 >
-                  {item}
-                </button>
+                  <img src={img} alt="thumb" className="w-full h-full object-cover" />
+                </div>
               ))}
             </div>
 
-            {/* Inline error message */}
-            {sizeError && (
-              <p className="text-gray-600 text-sm mt-1">Please select size</p>
-            )}
+            {/* Mobile Horizontal Thumbnails */}
+            <div className="flex md:hidden gap-3 overflow-x-auto px-4 pb-4 scrollbar-hide">
+                 {[image1, image2, image3, image4].filter(Boolean).map((img, idx) => (
+                    <div key={idx} onClick={() => setImage(img)} className={`w-20 h-24 flex-shrink-0 border ${image === img ? 'border-[#d4af37]' : 'border-gray-800'}`}>
+                        <img src={img} className="w-full h-full object-cover" />
+                    </div>
+                 ))}
+            </div>
 
-            <button
-              className="text-xs sm:text-sm md:text-base active:bg-gray-400 cursor-pointer bg-gray-300 py-2 px-4 sm:px-6 rounded-2xl mt-3 border border-gray-400 text-gray-900 shadow-md"
-              onClick={() => {
-                if (!size) {
-                  setSizeError(true)
-                  return
-                }
-                addToCart(productData._id, size)
-              }}
+            {/* MAIN IMAGE CANVAS (Big & Bold) */}
+            <div 
+              className="flex-1 bg-[#0a0a0a] relative overflow-hidden cursor-zoom-in group h-[60vh] md:h-[85vh] w-full"
+              onMouseMove={handleMouseMove}
+              onMouseLeave={handleMouseLeave}
             >
-              Add To Cart
+              <img
+                src={image}
+                alt={productData.name}
+                className="w-full h-full object-cover md:object-contain transition-transform duration-300 ease-out"
+                style={zoomStyle} 
+              />
+              {/* Badge */}
+              <div className='absolute top-6 left-6 bg-[#d4af37] text-black text-[10px] font-bold uppercase px-3 py-1 tracking-widest'>
+                 Premium
+              </div>
+            </div>
+          </div>
+
+          {/* --- RIGHT: STICKY PRODUCT INFO (40% Width) --- */}
+          <div className="w-full lg:w-[40%] flex flex-col h-fit lg:sticky lg:top-[120px] px-6 lg:px-0 pb-20">
+            
+            <div className='mb-8'>
+                <h1 className="text-4xl xl:text-6xl font-serif font-medium text-white leading-none tracking-tight mb-4">
+                {productData.name}
+                </h1>
+                <div className='flex justify-between items-end border-b border-white/10 pb-6'>
+                    <div className='flex flex-col gap-1'>
+                        <p className="text-3xl text-[#d4af37] font-serif">{currency}{productData.price}</p>
+                        <p className='text-xs text-gray-500 uppercase tracking-widest'>Inclusive of all taxes</p>
+                    </div>
+                    <div className='flex gap-1 text-[#d4af37] text-xs'>
+                        <FaStar/><FaStar/><FaStar/><FaStar/><FaStar className='text-gray-600'/>
+                        <span className='text-gray-400 ml-2'>(4.8)</span>
+                    </div>
+                </div>
+            </div>
+
+            {/* Description Preview */}
+            <p className='text-gray-400 font-light leading-relaxed text-sm mb-10'>
+                {productData.description}. Designed for those who appreciate the finer things. A perfect blend of heritage craftsmanship and modern silhouette.
+            </p>
+
+            {/* Size Selector (Minimal) */}
+            <div className="mb-10">
+              <div className="flex justify-between items-center mb-4">
+                 <p className="text-xs font-bold text-white uppercase tracking-[0.2em]">Select Size</p>
+                 <button className="flex items-center gap-2 text-xs text-gray-500 hover:text-[#d4af37] transition-colors uppercase tracking-wider">
+                    <FaRuler /> Size Guide
+                 </button>
+              </div>
+              <div className="grid grid-cols-4 gap-3">
+                {productData.sizes.map((item, index) => (
+                  <button
+                    key={index}
+                    onClick={() => { setSize(item); setSizeError(false) }}
+                    className={`h-12 w-full font-sans text-sm font-medium transition-all duration-300 border ${
+                      item === size 
+                      ? 'bg-white text-black border-white' 
+                      : 'bg-transparent text-gray-400 border-gray-800 hover:border-gray-500 hover:text-white'
+                    }`}
+                  >
+                    {item}
+                  </button>
+                ))}
+              </div>
+              {sizeError && <p className="text-red-500 text-xs mt-3 animate-pulse">Please select a size to proceed.</p>}
+            </div>
+
+            {/* Add to Cart Button (Full Width Luxury) */}
+            <button
+                onClick={() => { if (!size) { setSizeError(true); return; } addToCart(productData._id, size) }}
+                className='w-full bg-[#d4af37] text-black h-16 font-bold uppercase tracking-[0.3em] text-sm hover:bg-white transition-all duration-500 mb-10 shadow-[0_0_30px_rgba(212,175,55,0.1)]'
+            >
+                Add To Cart
             </button>
+
+            {/* Info Accordions (Clean Lines) */}
+            <div className='flex flex-col border-t border-white/10'>
+                
+                {/* 1. Features */}
+                <div className='border-b border-white/10'>
+                    <button onClick={() => setOpenSection(openSection === 'features' ? '' : 'features')} className='w-full py-6 flex justify-between items-center text-sm font-bold uppercase tracking-widest hover:text-[#d4af37] transition-colors'>
+                        Product Features <FaChevronDown className={`transition-transform ${openSection === 'features' ? 'rotate-180' : ''}`} />
+                    </button>
+                    <AnimatePresence>
+                        {openSection === 'features' && (
+                            <motion.div initial={{height:0, opacity:0}} animate={{height:'auto', opacity:1}} exit={{height:0, opacity:0}} className='overflow-hidden'>
+                                <ul className='pb-6 text-sm text-gray-400 font-light space-y-2 list-disc pl-5'>
+                                    <li>Premium fabric construction.</li>
+                                    <li>Tailored fit for modern silhouette.</li>
+                                    <li>Resistant to fading and wear.</li>
+                                </ul>
+                            </motion.div>
+                        )}
+                    </AnimatePresence>
+                </div>
+
+                {/* 2. Delivery */}
+                <div className='border-b border-white/10'>
+                    <button onClick={() => setOpenSection(openSection === 'delivery' ? '' : 'delivery')} className='w-full py-6 flex justify-between items-center text-sm font-bold uppercase tracking-widest hover:text-[#d4af37] transition-colors'>
+                        Shipping & Returns <FaChevronDown className={`transition-transform ${openSection === 'delivery' ? 'rotate-180' : ''}`} />
+                    </button>
+                    <AnimatePresence>
+                        {openSection === 'delivery' && (
+                            <motion.div initial={{height:0, opacity:0}} animate={{height:'auto', opacity:1}} exit={{height:0, opacity:0}} className='overflow-hidden'>
+                                <div className='pb-6 text-sm text-gray-400 font-light space-y-4'>
+                                    <div className='flex items-center gap-3'><FaTruck className='text-[#d4af37]'/> Free shipping on orders over {currency}5000</div>
+                                    <div className='flex items-center gap-3'><FaUndo className='text-[#d4af37]'/> 7-Day hassle-free return policy</div>
+                                    <div className='flex items-center gap-3'><FaShieldAlt className='text-[#d4af37]'/> Authenticity Guaranteed</div>
+                                </div>
+                            </motion.div>
+                        )}
+                    </AnimatePresence>
+                </div>
+
+            </div>
+
           </div>
-
-          {/* Divider */}
-          <div className="w-full h-[2px] bg-gray-400 my-4"></div>
-
-          {/* Extra Info */}
-          <div className="w-full text-xs sm:text-sm md:text-base text-gray-700 space-y-1">
-            <p>100% Original Product.</p>
-            <p>Cash On Delivery is available on this product</p>
-            <p>Easy Return and Exchange policy within 7 days</p>
-          </div>
         </div>
-      </div>
 
-      {/* Description & Reviews Section */}
-      <div className='w-[100%] min-h-[70vh] bg-gradient-to-l from-[#f9f9f9] to-[#eaeaea] flex items-start justify-start flex-col overflow-x-hidden '>
-        <div className='flex px-[20px] mt-[90px] lg:ml-[80px] ml-[0px] lg:mt-[0px]'>
-            <p className='border px-5 py-3 text-gray-800'>
-                Description 
-            </p>
-            <p  className='border px-5 py-3 text-gray-800'>
-                Reviews(124)
-            </p>
+        {/* --- RELATED PRODUCTS (Separated) --- */}
+        <div className="mt-32 pt-10 border-t border-white/5">
+            <h2 className="text-2xl font-serif text-white mb-10 text-center uppercase tracking-widest">
+               Curated For You
+            </h2>
+            <RelatedProduct category={productData.category} subCategory={productData.subCategory} currentProductId={productData._id} />
         </div>
-        <div className='w-[80%] md:h-[150px] h-[220px] bg-gray-200 text-gray-800 text-[13px] md:text-[15px] lg:text-[20px] px-[10px] md:px-[30px] lg:ml-[100px] ml-[20px] border'>
-            <p className='w-[95%] h-[90%] flex items-center justify-center text-[18px] italic'>
-                “Upgrade your wardrobe with stylish pieces that match your personality and lifestyle. From casual wear to statement outfits, our collection is designed to keep you ahead in fashion while ensuring comfort and quality. With premium fabrics, eye-catching designs, and affordable prices, we bring fashion that fits every occasion.” 
-            </p>
-        </div>
-        <RelatedProduct category={productData.category} subCategory={productData.subCategory}
-        currentProductId={productData._id}/>
+
       </div>
     </div>
-  ) : (
-    <div className="opacity-0"></div>
-  )
+  );
 }
 
-export default ProductDetails
+export default ProductDetails;

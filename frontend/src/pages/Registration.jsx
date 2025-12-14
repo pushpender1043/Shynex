@@ -1,169 +1,191 @@
-import React from 'react';
-import {useState} from 'react';
-import logo from '../assets/sv_logo.png';
+import React, { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import google from '../assets/google.webp';
-import { IoIosEye } from "react-icons/io";
-import { FaRegEyeSlash } from "react-icons/fa6";
-import { useContext } from 'react';
-import {AuthDataContext} from '../Context/AuthContext.jsx';
+import { IoEyeOffOutline, IoEyeOutline } from "react-icons/io5";
+import { AuthDataContext } from '../Context/AuthContext.jsx';
 import axios from 'axios';
 import { signInWithPopup } from 'firebase/auth';
-import {auth,provider} from '../../utils/Firebase.js';
-import {userDataContext} from '../Context/UserContext.jsx';
-  
+import { auth, provider } from '../../utils/Firebase.js'; 
+import { userDataContext } from '../Context/UserContext.jsx';
 
 function Registration() {
   let navigate = useNavigate();
-  let [show,setShow]=useState(false);
-  let {serverUrl}=useContext(AuthDataContext);
-  let [name,setName]=useState("")
-  let [email,setEmail]=useState("")
-  let [password,setPassword]=useState("")
-  let {getCurrentUser}=useContext(userDataContext);
+  let [show, setShow] = useState(false);
+  let { serverUrl } = useContext(AuthDataContext);
+  let [name, setName] = useState("");
+  let [email, setEmail] = useState("");
+  let [password, setPassword] = useState("");
+  let { getCurrentUser } = useContext(userDataContext);
 
-  
-
-  const handleSignup=async(e)=>{
-    e.preventDefault();//to prevent page reloading 
-    try{
-        const result=await axios.post(serverUrl+'/api/auth/registration',{name,email,password},{withCredentials:true})
-         getCurrentUser();
-        navigate("/");
-        console.log(result.data);
-        console.log("Registered");
-//       const parsedData = JSON.parse(result.data);
-// console.log(parsedData);
-    }
-    catch(error){
-        // console.log("kuch to gadbad");
-        console.log(error)
-      
-
-
-    }
-
-  }
-
-
-
-const googleSignup=async()=>{
-  try{
-    const response=await signInWithPopup(auth,provider);
-    console.log(response);
-    //create user
-    let user=response.user;
-    let name=user.displayName;
-    let email=user.email;
-
-    //to save into db
-    const result=await axios.post(serverUrl+'/api/auth/googlelogin',{name,email},{withCredentials:true})
-    console.log(result.data)
+  // LOGIC: Handle Normal Signup
+  const handleSignup = async (e) => {
+    e.preventDefault();
+    try {
+      const result = await axios.post(serverUrl + '/api/auth/registration', { name, email, password }, { withCredentials: true });
       getCurrentUser();
-        navigate("/");
-
+      navigate("/");
+      console.log("Registered Successfully");
+    } catch (error) {
+      console.log(error);
+      alert("Signup Error: " + (error.response?.data?.message || error.message));
+    }
   }
-  catch(err){
-      console.log(err);
 
-
-  }
-}
-  return (
-    <div className='w-[100vw] h-[100vh] bg-gradient-to-l from-[#141414] to-[#0c2025] text-white flex flex-col items-center'>
+  // LOGIC: Handle Google Signup
+  const googleSignup = async () => {
+    try {
+      console.log("Attempting Google Sign-In...");
+      const response = await signInWithPopup(auth, provider);
       
-      {/* Logo Header */}
-      <div
-        className='w-full h-[80px] flex items-center px-[30px] gap-[10px] cursor-pointer'
-        onClick={() => navigate("/")}
-      >
-        <img className='w-[40px]' src={logo} alt="logo" />
-        <h1 className='text-[22px] font-sans font-bold tracking-wide'>OneCart</h1>
-      </div>
+      let user = response.user;
+      let googleName = user.displayName;
+      let googleEmail = user.email;
 
-      {/* Welcome Text */}
-      <div className='w-full h-[100px] flex flex-col items-center justify-center gap-[10px]'>
-        <span className='text-[25px] font-semibold'>Registration Page</span>
-        <span className='text-[16px] text-gray-300'>Welcome to OneCart, Place Your Order</span>
-      </div>
+      const result = await axios.post(serverUrl + '/api/auth/googlelogin', { name: googleName, email: googleEmail }, { withCredentials: true });
+      
+      getCurrentUser();
+      navigate("/");
 
-      {/* Registration Form */}
-      <div className='max-w-[500px] w-[90%] h-[500px] bg-[#00000025] border border-[#96969635] backdrop-blur-2xl rounded-lg shadow-lg flex items-center justify-center'>
-        <form  action ="" className='w-[90%] h-[90%] flex flex-col items-center justify-start gap-[20px]' onSubmit={handleSignup}>
-          
-          {/* Google Signup */}
-          <div className='w-full h-[50px] bg-[#42656cae] hover:bg-[#42656c] text-white rounded-lg flex items-center justify-center gap-[10px] py-[10px] cursor-pointer transition-all duration-200' onClick={googleSignup}>
-            <img className='w-[20px]' src={google} alt="Google" />
-            Signup with Google
-          </div>
+    } catch (err) {
+      console.error("Google Login Failed:", err);
+      alert("Login Failed: " + err.message);
+    }
+  }
 
-          {/* OR Divider */}
-          <div className='flex items-center justify-center w-full gap-2 text-gray-400'>
-            <div className='w-full h-[1px] bg-gray-600'></div>
-            <span className='text-sm'>OR</span>
-            <div className='w-full h-[1px] bg-gray-600'></div>
-          </div>
+  // ✅ NEW PREMIUM IMAGE (Luxury Fashion)
+  const signupImage = "https://images.unsplash.com/photo-1500917293891-ef795e70e1f6?q=80&w=2070&auto=format&fit=crop";
 
-          {/* Inputs */}
-         
-
-         
-          <input
-           id="username"
-           name="name"
-            type="text"
-            className='w-full px-4 py-2 rounded-md bg-[#1f2a2e] text-white border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-400'
-            placeholder='Username' onChange={(e)=>setName(e.target.value)} value={name}
-            required 
-          />
-          <input
-          id="email"
-           name="email"
-            type="email"
-            className='w-full px-4 py-2 rounded-md bg-[#1f2a2e] text-white border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-400'
-            placeholder='Email' onChange={(e)=>setEmail(e.target.value)} value={email}
-            required
-          />
-      {/* Password Input  */}
-<div className='relative w-full'>
-  <input
-    type={show?"text":"password"}
-     id="password"
-  name="password"
-    className='w-full px-4 py-2 rounded-md bg-[#1f2a2e] text-white border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-400'
-    placeholder='Password'
-    required  onChange={(e)=>setPassword(e.target.value)} value={password}
-  />
-{show&&<IoIosEye
-className='text-white text-xl absolute top-1/2 right-3 transform -translate-y-1/2 cursor-pointer' onClick={()=>setShow(prev=>!prev)}
-
-/>}
-  {!show&&<FaRegEyeSlash  className='text-white text-xl absolute top-1/2 right-3 transform -translate-y-1/2 cursor-pointer' onClick={()=>setShow(prev=>!prev)} />}
-</div>
-
+  return (
+    // Outer container with subtle dark pattern background
+    <div className='w-full min-h-screen flex items-center justify-center p-4 bg-[#020202] bg-[radial-gradient(circle_at_center,_#1a1a1a_0%,_#020202_100%)]'>
+      
+      {/* MAIN CARD Entrance Animation */}
+      <div className='w-full max-w-5xl grid grid-cols-1 md:grid-cols-2 bg-[#0a0a0a] rounded-sm overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.5)] border border-[#d4af37]/10 animate-fade-up'>
         
+        {/* LEFT SIDE: Image & Branding */}
+        <div className='hidden md:flex relative flex-col justify-between p-12 overflow-hidden'>
+          
+          {/* Slow Zoom Animation on background image */}
+          <div className='absolute inset-0 bg-cover bg-center animate-slow-zoom' style={{backgroundImage: `url(${signupImage})`}}></div>
+          
+          {/* Dark Overlay */}
+          <div className='absolute inset-0 bg-gradient-to-t from-[#0a0a0a] via-black/40 to-black/20'></div>
+          
+          <div className='relative z-10 cursor-pointer animate-fade-up delay-200' onClick={() => navigate("/")}>
+            <h1 className='text-5xl tracking-[0.15em] text-white font-serif drop-shadow-lg'>
+              SHY<span className='text-[#d4af37]'>NEX</span>
+            </h1>
+            <div className='h-[1px] w-12 bg-[#d4af37] mt-2 mb-1'></div>
+            <p className='text-[#d4af37] text-[10px] tracking-[0.4em] uppercase'>Luxury Apparel</p>
+          </div>
 
-          {/* Submit Button */}
-          <button
-            className='w-full py-2 rounded-md bg-blue-600 hover:bg-blue-700 transition-all duration-200 font-semibold'
-            type='submit'
-          >
-            Create Account
-          </button>
-            
+          <div className='relative z-10 animate-fade-up delay-400'>
+            <h2 className='text-3xl text-gray-100 font-serif italic leading-snug drop-shadow-md'>
+              "Join the circle of exclusivity."
+            </h2>
+          </div>
+        </div>
 
-          {/* Navigation to Login */}
-          <p className='text-sm text-gray-300'>
-            Already have an account?{' '}
-            <span
-              className='text-blue-400 cursor-pointer hover:underline'
-              onClick={() => navigate("/Login")}
-            >
-              Login
-            </span>
-          </p>
+        {/* RIGHT SIDE: Signup Form */}
+        <div className='flex flex-col justify-center px-8 py-12 md:px-16 bg-[#0a0a0a] relative'>
+           {/* Subtle decorative line */}
+           <div className='absolute top-0 left-1/2 -translate-x-1/2 w-1/3 h-[1px] bg-gradient-to-r from-transparent via-[#d4af37]/30 to-transparent md:hidden'></div>
 
-        </form>
+           <div className='mb-10 text-center animate-fade-up delay-300'>
+             <h3 className='text-3xl text-white font-serif mb-2'>Create Account</h3>
+             <p className='text-gray-400 text-sm tracking-wider font-light'>Become a member of Shynex.</p>
+           </div>
+
+           <form onSubmit={handleSignup} className='flex flex-col gap-6 animate-fade-up delay-400'>
+             
+             {/* Name Input */}
+             <div className='group relative'>
+               <input
+                 type="text"
+                 className='peer w-full bg-transparent text-white px-1 py-3 border-b border-gray-800 focus:border-transparent outline-none transition-all placeholder-transparent font-light z-10 relative'
+                 placeholder='Enter your name'
+                 id="name"
+                 onChange={(e) => setName(e.target.value)}
+                 value={name}
+                 required
+               />
+               <label htmlFor="name" className='absolute left-1 top-3 text-gray-500 text-sm transition-all peer-focus:-top-4 peer-focus:text-[#d4af37] peer-focus:text-xs peer-valid:-top-4 peer-valid:text-xs peer-valid:text-gray-500 pointer-events-none'>Full Name</label>
+               <span className='absolute bottom-0 left-1/2 w-0 h-[1px] bg-[#d4af37] transition-all duration-500 group-focus-within:w-full group-focus-within:left-0'></span>
+             </div>
+
+             {/* Email Input */}
+             <div className='group relative'>
+               <input
+                 type="email"
+                 className='peer w-full bg-transparent text-white px-1 py-3 border-b border-gray-800 focus:border-transparent outline-none transition-all placeholder-transparent font-light z-10 relative'
+                 placeholder='Enter your email'
+                 id="email"
+                 onChange={(e) => setEmail(e.target.value)}
+                 value={email}
+                 required
+               />
+               <label htmlFor="email" className='absolute left-1 top-3 text-gray-500 text-sm transition-all peer-focus:-top-4 peer-focus:text-[#d4af37] peer-focus:text-xs peer-valid:-top-4 peer-valid:text-xs peer-valid:text-gray-500 pointer-events-none'>Email Address</label>
+               <span className='absolute bottom-0 left-1/2 w-0 h-[1px] bg-[#d4af37] transition-all duration-500 group-focus-within:w-full group-focus-within:left-0'></span>
+             </div>
+
+             {/* Password Input */}
+             <div className='group relative'>
+               <input
+                 type={show ? "text" : "password"}
+                 className='peer w-full bg-transparent text-white px-1 py-3 border-b border-gray-800 focus:border-transparent outline-none transition-all placeholder-transparent font-light z-10 relative'
+                 placeholder='Create password'
+                 id="password"
+                 onChange={(e) => setPassword(e.target.value)}
+                 value={password}
+                 required
+               />
+               <label htmlFor="password" class='absolute left-1 top-3 text-gray-500 text-sm transition-all peer-focus:-top-4 peer-focus:text-[#d4af37] peer-focus:text-xs peer-valid:-top-4 peer-valid:text-xs peer-valid:text-gray-500 pointer-events-none'>Create Password</label>
+               <span className='absolute bottom-0 left-1/2 w-0 h-[1px] bg-[#d4af37] transition-all duration-500 group-focus-within:w-full group-focus-within:left-0'></span>
+
+               <div 
+                 className='absolute right-2 top-[14px] text-gray-600 cursor-pointer hover:text-[#d4af37] transition-colors z-20'
+                 onClick={() => setShow(prev => !prev)}
+               >
+                 {show ? <IoEyeOffOutline size={20} /> : <IoEyeOutline size={20} />}
+               </div>
+             </div>
+
+             {/* Gold Button */}
+             <button
+               className='btn-shimmer animate-fade-up delay-500 w-full py-4 mt-2 rounded-sm bg-[#d4af37] text-black font-bold text-sm uppercase tracking-[0.25em] transition-all duration-500 transform hover:-translate-y-[2px] shadow-[0_5px_20px_rgba(212,175,55,0.15)] hover:shadow-[0_10px_30px_rgba(212,175,55,0.3)]'
+               type='submit'
+             >
+               Sign Up
+             </button>
+
+             <div className='relative flex py-2 items-center animate-fade-up delay-600'>
+                <div className='flex-grow border-t border-gray-800/50'></div>
+                <span className='flex-shrink-0 mx-4 text-gray-600 text-[9px] uppercase tracking-[0.2em]'>Or</span>
+                <div className='flex-grow border-t border-gray-800/50'></div>
+             </div>
+
+             <button 
+               type="button"
+               className='animate-fade-up delay-700 w-full py-3 rounded-sm border border-gray-800 hover:border-[#d4af37]/50 bg-[#0f0f0f] text-gray-400 hover:text-[#d4af37] text-sm flex items-center justify-center gap-3 transition-all duration-500 group' 
+               onClick={googleSignup}
+             >
+               <img className='w-5 grayscale group-hover:grayscale-0 transition-all' src={google} alt="Google" />
+               <span className='tracking-wider font-light'>Sign up with Google</span>
+             </button>
+
+           </form>
+
+           <p className='text-center text-sm text-gray-500 mt-8 font-light animate-fade-up delay-700'>
+             Already have an account?{' '}
+             <span
+               className='text-[#d4af37] cursor-pointer hover:underline underline-offset-4 transition-all'
+               onClick={() => navigate("/login")}
+             >
+               Login here
+             </span>
+           </p>
+
+        </div>
       </div>
     </div>
   );

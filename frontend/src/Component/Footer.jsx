@@ -1,59 +1,156 @@
-import React from 'react'
-import logo from "../assets/sv_logo.png";
+import React from 'react';
+import { useNavigate } from 'react-router-dom'; 
+import { FaInstagram, FaFacebookF, FaTwitter, FaLinkedinIn, FaMapMarkerAlt, FaPhoneAlt, FaEnvelope } from "react-icons/fa";
+import { IoIosArrowForward } from "react-icons/io"; 
+import { motion } from "framer-motion";
 
 function Footer() {
+  const navigate = useNavigate();
+
+  const handleNav = (path) => {
+    window.scrollTo({ top: 0, behavior: 'smooth' }); // Smooth scroll to top
+    navigate(path);
+  };
+
   return (
-    <div className='w-full md:h-[36vh] h-auto mb-[77px] md:mb-0 bg-gradient-to-l from-[#0f1c2c] to-[#1f3a40] text-white'>
+    // THEME: LUXURY BLACK & GOLD WITH ANIMATIONS
+    <footer className='w-full mt-20 bg-[#050505] border-t border-[#d4af37]/20 text-gray-400 font-sans relative overflow-hidden'>
       
-      <div className='w-full md:h-[28vh] h-auto flex flex-col md:flex-row items-center md:items-start justify-between md:px-[50px] px-[15px] py-[20px] md:py-0 gap-[20px]'>
+      {/* Background Ambience (Restored) */}
+      <div className='absolute top-0 left-1/4 w-96 h-96 bg-[#d4af37]/5 rounded-full blur-[120px] pointer-events-none'></div>
 
-        {/* Left Logo Section */}
-        <div className='md:w-[30%] w-full flex flex-col items-center md:items-start text-center md:text-left gap-[10px] mt-[10px]'>
-          <div className='flex items-center justify-center md:justify-start gap-[5px]'>
-            <img src={logo} alt="logo" className='md:w-[40px] md:h-[40px] w-[30px] h-[30px]' />
-            <p className='text-[19px] md:text-[20px] font-semibold text-[white]'>Shopverse</p>
+      <div className='max-w-7xl mx-auto px-6 sm:px-8 lg:px-10 py-16 relative z-10'>
+        
+        <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12'>
+
+          {/* 1. BRAND SECTION */}
+          <div className='flex flex-col gap-6'>
+            {/* Shynex Text Logo */}
+            <div className='cursor-pointer' onClick={() => handleNav('/')}>
+              <h1 className='text-3xl font-serif font-bold text-white tracking-[0.15em]'>
+                SHY<span className='text-[#d4af37]'>NEX</span>
+              </h1>
+              {/* ✅ WORDING UPDATED */}
+              <p className='text-[10px] uppercase tracking-[0.3em] text-[#d4af37] mt-1'>
+                Luxury Apparel & Couture
+              </p>
+            </div>
+            
+            {/* ✅ WORDING UPDATED */}
+            <p className='text-sm text-gray-500 leading-relaxed font-light'>
+              Redefining modern fashion. We curate timeless silhouettes that blend sophisticated tailoring with contemporary aesthetics.
+            </p>
+            
+            {/* Social Icons with Framer Motion (Restored) */}
+            <div className='flex gap-4 mt-2'>
+              {[FaInstagram, FaFacebookF, FaTwitter, FaLinkedinIn].map((Icon, index) => (
+                <motion.div 
+                  key={index}
+                  whileHover={{ y: -5, scale: 1.1, borderColor: '#d4af37', color: '#d4af37' }}
+                  whileTap={{ scale: 0.9 }}
+                  className='w-10 h-10 rounded-full bg-[#111] border border-gray-800 flex items-center justify-center cursor-pointer transition-colors text-gray-400 hover:shadow-[0_0_15px_rgba(212,175,55,0.3)]'
+                >
+                  <Icon size={16} />
+                </motion.div>
+              ))}
+            </div>
           </div>
-          <p className='text-[14px] hidden md:block text-[white ]'>
-            Shopverse is your all-in-one online shopping destination, offering top-quality 
-            products, unbeatable deals, and fast delivery — all backed by trusted service 
-            designed to make your life easier every day.
-          </p>
-          <p className='text-[14px] flex md:hidden text-[white]'>
-            Fast. Easy. Reliable. Shopverse Shopping
-          </p>
-        </div>
 
-        {/* Company Links */}
-        <div className='md:w-[25%] w-full flex flex-col items-center md:items-center text-center gap-[10px]'>
-          <p className='text-[19px] md:text-[20px] font-semibold mt-[10px] text-[white]'>COMPANY</p>
-          <ul className='flex flex-col gap-[5px]'>
-            <li className='text-[15px] cursor-pointer hover:text-[#7ef5c0]'>Home</li>
-            <li className='text-[15px] cursor-pointer hover:text-[#7ef5c0]'>About Us</li>
-            <li className='text-[15px] cursor-pointer hover:text-[#7ef5c0]'>Delivery</li>
-            <li className='text-[15px] cursor-pointer hover:text-[#7ef5c0]'>Privacy Policy</li>
-          </ul>
-        </div>
+          {/* 2. QUICK LINKS */}
+          <div>
+            <h3 className='text-md font-serif font-bold text-white mb-6 tracking-widest uppercase relative inline-block'>
+              Quick Links
+              <span className='absolute -bottom-2 left-0 w-1/2 h-[1px] bg-[#d4af37]'></span>
+            </h3>
+            <ul className='flex flex-col gap-3 text-sm font-light'>
+              {['Home', 'Collection', 'About', 'Contact'].map((item, index) => (
+                <li 
+                  key={index}
+                  onClick={() => handleNav(item === 'Home' ? '/' : `/${item.toLowerCase()}`)} 
+                  className='cursor-pointer flex items-center gap-2 hover:text-[#d4af37] transition-all duration-300 group'
+                >
+                  <IoIosArrowForward className='text-[#d4af37] text-xs transition-transform duration-300 group-hover:translate-x-1' /> 
+                  <span className='group-hover:translate-x-1 transition-transform duration-300'>{item}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
 
-        {/* Contact Info */}
-        <div className='md:w-[25%] w-full flex flex-col items-center md:items-center text-center gap-[10px]'>
-          <p className='text-[19px] md:text-[20px] font-semibold mt-[10px] text-[#white]'>GET IN TOUCH</p>
-          <ul className='flex flex-col gap-[5px]'>
-            <li className='text-[15px] cursor-pointer hover:text-[#7ef5c0]'>+91-9876545673</li>
-            <li className='text-[15px] cursor-pointer hover:text-[#7ef5c0]'>contact@Shopverse.com</li>
-            <li className='text-[15px] cursor-pointer hover:text-[#7ef5c0]'>+1-123-456-7890</li>
-            <li className='text-[15px] cursor-pointer hover:text-[#7ef5c0]'>admin@Shopverse.com</li>
-          </ul>
-        </div>
+          {/* 3. POLICIES */}
+          <div>
+            <h3 className='text-md font-serif font-bold text-white mb-6 tracking-widest uppercase relative inline-block'>
+              Our Policies
+              <span className='absolute -bottom-2 left-0 w-1/2 h-[1px] bg-[#d4af37]'></span>
+            </h3>
+            <ul className='flex flex-col gap-3 text-sm font-light'>
+              {['Privacy Policy', 'Terms & Conditions', 'Return Policy', 'Delivery Info'].map((item, index) => (
+                <li 
+                  key={index}
+                  onClick={() => handleNav('/about')} 
+                  className='cursor-pointer flex items-center gap-2 hover:text-[#d4af37] transition-all duration-300 group'
+                >
+                  <IoIosArrowForward className='text-[#d4af37] text-xs transition-transform duration-300 group-hover:translate-x-1' /> 
+                  <span className='group-hover:translate-x-1 transition-transform duration-300'>{item}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
 
+          {/* 4. CONTACT INFO */}
+          <div>
+            <h3 className='text-md font-serif font-bold text-white mb-6 tracking-widest uppercase relative inline-block'>
+              Contact Us
+              <span className='absolute -bottom-2 left-0 w-1/2 h-[1px] bg-[#d4af37]'></span>
+            </h3>
+            <ul className='flex flex-col gap-5 text-sm font-light'>
+              <li className='flex items-start gap-4 group cursor-default'>
+                <div className='mt-1 p-2 bg-[#111] border border-gray-800 rounded-full text-[#d4af37] group-hover:border-[#d4af37] transition-colors'>
+                    <FaPhoneAlt size={12} />
+                </div>
+                <div>
+                  <p className='text-gray-500 text-xs uppercase tracking-wider'>Call Us</p>
+                  <p className='text-white font-medium group-hover:text-[#d4af37] transition-colors'>+91 98765 43210</p>
+                </div>
+              </li>
+              <li className='flex items-start gap-4 group cursor-default'>
+                <div className='mt-1 p-2 bg-[#111] border border-gray-800 rounded-full text-[#d4af37] group-hover:border-[#d4af37] transition-colors'>
+                    <FaEnvelope size={12} />
+                </div>
+                <div>
+                  <p className='text-gray-500 text-xs uppercase tracking-wider'>Email Us</p>
+                  <p className='text-white font-medium group-hover:text-[#d4af37] transition-colors'>support@shynex.com</p>
+                </div>
+              </li>
+              <li className='flex items-start gap-4 group cursor-default'>
+                <div className='mt-1 p-2 bg-[#111] border border-gray-800 rounded-full text-[#d4af37] group-hover:border-[#d4af37] transition-colors'>
+                    <FaMapMarkerAlt size={12} />
+                </div>
+                <div>
+                  <p className='text-gray-500 text-xs uppercase tracking-wider'>Location</p>
+                  <p className='text-white font-medium group-hover:text-[#d4af37] transition-colors'>New Delhi, India</p>
+                </div>
+              </li>
+            </ul>
+          </div>
+
+        </div>
       </div>
 
-      <div className='w-full h-[1px] bg-[#3f5a61]'></div>
-
-      <div className='w-full h-[10vh] flex items-center justify-center text-[white]'>
-        © 2025 Shopverse.com — All Rights Reserved
+      {/* --- COPYRIGHT BAR --- */}
+      <div className='border-t border-[#d4af37]/10 bg-black'>
+        <div className='max-w-7xl mx-auto px-6 py-6 flex flex-col md:flex-row items-center justify-between text-xs text-gray-600 font-light tracking-wide'>
+          {/* ✅ WORDING UPDATED */}
+          <p className='hover:text-gray-400 transition-colors'>© 2025 Shynex Luxury. All Rights Reserved.</p>
+          <div className='flex gap-6 mt-3 md:mt-0'>
+             <span className='hover:text-[#d4af37] cursor-pointer transition-colors'>Privacy</span>
+             <span className='hover:text-[#d4af37] cursor-pointer transition-colors'>Terms</span>
+             <span className='hover:text-[#d4af37] cursor-pointer transition-colors'>Sitemap</span>
+          </div>
+        </div>
       </div>
-    </div>
+
+    </footer>
   )
 }
 
-export default Footer
+export default Footer;

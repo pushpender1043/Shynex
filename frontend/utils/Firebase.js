@@ -4,11 +4,13 @@ import { initializeApp } from "firebase/app";
 
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_APIKEY,
-  authDomain: "loginonecart-c8b3c.firebaseapp.com",
-  projectId: "loginonecart-c8b3c",
-  storageBucket: "loginonecart-c8b3c.firebasestorage.app",
-  messagingSenderId: "290222007729",
-  appId: "1:290222007729:web:99c162c70cd2cbcfbc8990"
+ authDomain: "login-d75ec.firebaseapp.com",
+  projectId: "login-d75ec",
+  storageBucket: "login-d75ec.firebasestorage.app",
+  messagingSenderId: "374981580492",
+  appId: "1:374981580492:web:ef22f43d85d213d9f51469",
+  measurementId: "G-DTB8SVDSPW"
+  
 };
 
 

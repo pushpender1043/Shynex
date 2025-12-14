@@ -1,24 +1,21 @@
-import React, { useContext, useState, useEffect } from 'react'
-import { FaChevronRight, FaAngleDown } from "react-icons/fa";
-import Title from '../Component/Title';
+import React, { useContext, useState, useEffect } from 'react';
+import { FaFilter, FaSortAmountDown, FaTimes, FaCheck } from "react-icons/fa";
 import { ShopDataContext } from '../Context/ShopContext';
 import Card from '../Component/Card';
-import Product from './Product';
+import { motion, AnimatePresence } from 'framer-motion';
 
 function Collections() {
-  let [showFilter, setShowFilter] = useState(false);
-  let { products, search, showSearch } = useContext(ShopDataContext);
-  console.log("Products from context:", products);
+  const [showFilter, setShowFilter] = useState(false);
+  const { products, search, showSearch } = useContext(ShopDataContext);
+  
+  const [filterProduct, setFilterProduct] = useState([]);
+  const [category, setCategory] = useState([]);
+  const [subCategory, setSubCategory] = useState([]);
+  const [sortType, setSortType] = useState("relavant");
 
-  let [filterProduct, setFilterProduct] = useState([]);
-  let [category, setCategory] = useState([]);
-  let [subCategory, setSubCategory] = useState([]);
-  let [sortType, setSortType] = useState("relavant");
+  useEffect(() => { setFilterProduct(products); }, [products]);
 
-  useEffect(() => {
-    console.log("Products in context:", products);
-  }, [products]);
-
+  // --- FILTER LOGIC ---
   const toggleCategory = (e) => {
     if (category.includes(e.target.value)) {
       setCategory(prev => prev.filter(item => item !== e.target.value));
@@ -37,7 +34,6 @@ function Collections() {
 
   const applyFilter = () => {
     let productCopy = products.slice();
-
     if (showSearch && search) {
       productCopy = productCopy.filter(item => item.name.toLowerCase().includes(search.toLowerCase()));
     }
@@ -53,94 +49,151 @@ function Collections() {
   const sortProducts = () => {
     let fbCopy = filterProduct.slice();
     switch (sortType) {
-      case 'low-high':
-        setFilterProduct(fbCopy.sort((a, b) => (a.price - b.price)));
-        break;
-      case 'high-low':
-        setFilterProduct(fbCopy.sort((a, b) => (b.price - a.price)));
-        break;
-      default:
-        applyFilter();
-        break;
+      case 'low-high': setFilterProduct(fbCopy.sort((a, b) => (a.price - b.price))); break;
+      case 'high-low': setFilterProduct(fbCopy.sort((a, b) => (b.price - a.price))); break;
+      default: applyFilter(); break;
     }
   };
 
-  useEffect(() => {
-    sortProducts();
-  }, [sortType]);
-
-  useEffect(() => {
-    setFilterProduct(products);
-  }, [products]);
-
-  useEffect(() => {
-    applyFilter();
-  }, [category, subCategory, search, showSearch]);
+  useEffect(() => { sortProducts(); }, [sortType]);
+  useEffect(() => { applyFilter(); }, [category, subCategory, search, showSearch]);
 
   return (
-    <div className={`w-[99vw] min-h-[100vh] bg-gradient-to-br from-[#FFFFFF] via-[#FAFAFA] to-[#F1F1F1] flex items-start flex-col md:flex-row justify-start pt-[70px] overflow-x-hidden z-[2] pb-[110px]`}>
+    <div className='w-full min-h-screen bg-[#050505] pt-[100px] font-sans text-white relative'>
       
-      {/* Sidebar Filter */}
-      <div className={`md:w-[30vw] lg:w-[20vw] w-[100vw] md:min-h-[100vh] p-[20px] border-r border-gray-300 text-[#333] lg:fixed ${showFilter ? "h-[75vh]" : "h-[8vh]"}`}>
-        <p className='text-[25px] text-[#111] font-semibold flex gap-[5px] items-center cursor-pointer justify-start' onClick={() => setShowFilter(prev => !prev)}>
-          Filters
-          {!showFilter && <FaChevronRight className='text-[15px] md:hidden' />}
-          {showFilter && <FaAngleDown className='text-[15px] md:hidden' />}
-        </p>
-
-        <div className={`border border-gray-300 pl-5 py-3 mt-6 rounded-md bg-[#FCFCFC] ${showFilter ? "" : 'hidden'} md:block`}>
-          <p className='text-[18px] text-[#111] font-medium'>Categories</p>
-          <div className='w-[230px] h-[120px] flex flex-col gap-[10px] mt-2'>
-            <label className='flex items-center gap-[10px] text-[#222] text-[16px]'>
-              <input type="checkbox" value={'Men'} onChange={toggleCategory} className='w-3' /> Men
-            </label>
-            <label className='flex items-center gap-[10px] text-[#222] text-[16px]'>
-              <input type="checkbox" value={'Women'} onChange={toggleCategory} className='w-3' /> Women
-            </label>
-            <label className='flex items-center gap-[10px] text-[#222] text-[16px]'>
-              <input type="checkbox" value={'Kids'} onChange={toggleCategory} className='w-3' /> Kids
-            </label>
-          </div>
-        </div>
-
-        <div className={`border border-gray-300 pl-5 py-3 mt-6 rounded-md bg-[#FCFCFC] ${showFilter ? "" : 'hidden'} md:block`}>
-          <p className='text-[18px] text-[#111] font-medium'>Sub-Categories</p>
-          <div className='w-[230px] h-[120px] flex flex-col gap-[10px] mt-2'>
-            <label className='flex items-center gap-[10px] text-[#222] text-[16px]'>
-              <input type="checkbox" value={'TopWear'} onChange={toggleSubCategory} className='w-3' /> Top-Wear
-            </label>
-            <label className='flex items-center gap-[10px] text-[#222] text-[16px]'>
-              <input type="checkbox" value={'BottomWear'} onChange={toggleSubCategory} className='w-3' /> Bottom-Wear
-            </label>
-            <label className='flex items-center gap-[10px] text-[#222] text-[16px]'>
-              <input type="checkbox" value={'WinterWear'} onChange={toggleSubCategory} className='w-3' /> Winter-Wear
-            </label>
-          </div>
-        </div>
+      {/* --- HEADER --- */}
+      <div className='text-center py-10'>
+         <h1 className='text-4xl md:text-6xl font-serif font-bold tracking-widest text-white'>
+            THE <span className='text-[#d4af37]'>ARCHIVE</span>
+         </h1>
+         <p className='text-gray-500 mt-2 text-xs uppercase tracking-[0.3em]'>Season 2025 / Premium Collection</p>
       </div>
 
-      {/* Main Product Section */}
-      <div className='lg:pl-[20%] md:py-[10px]'>
-        <div className='md:w-[80vw] w-[100vw] p-[20px] flex justify-between flex-col lg:flex-row lg:px-[50px]'>
-          <Title text1={"All "} text2={"Collections"} />
-          <select className='bg-[#FCFCFC] w-[60%] md:w-[200px] h-[50px] px-[10px] text-[#222] rounded-lg border border-gray-300' onChange={(e) => setSortType(e.target.value)}>
-            <option value="relavant">Sort by : Relevant</option>
-            <option value="low-high">Sort by : Low to High</option>
-            <option value="high-low">Sort by : High to Low</option>
-          </select>
-        </div>
+      {/* --- CONTROL BAR (Updated: Removed 'sticky', added 'relative') --- */}
+      <div className='relative w-full bg-[#0a0a0a] border-y border-white/10 px-6 py-4 flex justify-between items-center z-10'>
+         
+         {/* Filter Button */}
+         <button 
+            onClick={() => setShowFilter(true)}
+            className='flex items-center gap-2 text-sm font-bold uppercase tracking-widest text-white hover:text-[#d4af37] transition-colors'
+         >
+            <FaFilter className='text-[#d4af37]' /> Filters
+         </button>
 
-        <div className='lg:w-[80vw] md:w-[60vw] w-[100vw] min-h-[70vh] flex items-center justify-center flex-wrap gap-[30px] text-[#222]'>
-          {
-            filterProduct && filterProduct.length > 0 ? (
-              filterProduct.map((item, index) => (
-                <Card key={index} name={item.name} image={item.image1} id={item._id} price={item.price} />
-              ))
+         {/* Results Count */}
+         <span className='hidden md:block text-gray-500 text-xs font-light tracking-wide'>
+            {filterProduct.length} PREMIUM ITEMS FOUND
+         </span>
+
+         {/* Sort Dropdown */}
+         <div className='flex items-center gap-3 group'>
+            <span className='text-xs text-gray-500 uppercase tracking-wide group-hover:text-[#d4af37]'>Sort By:</span>
+            <select 
+               className='bg-transparent text-white text-sm font-bold outline-none cursor-pointer uppercase' 
+               onChange={(e) => setSortType(e.target.value)}
+            >
+               <option value="relavant" className='bg-black text-gray-400'>Relevant</option>
+               <option value="low-high" className='bg-black text-gray-400'>Price: Low to High</option>
+               <option value="high-low" className='bg-black text-gray-400'>Price: High to Low</option>
+            </select>
+         </div>
+      </div>
+
+      {/* --- SLIDE-OUT FILTER DRAWER --- */}
+      <AnimatePresence>
+        {showFilter && (
+          <>
+            {/* Backdrop */}
+            <motion.div 
+               initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+               onClick={() => setShowFilter(false)}
+               className="fixed inset-0 bg-black/80 z-[60] backdrop-blur-sm"
+            />
+            
+            {/* Drawer Panel */}
+            <motion.div
+               initial={{ x: "-100%" }} animate={{ x: 0 }} exit={{ x: "-100%" }}
+               transition={{ type: "tween", duration: 0.4 }}
+               className="fixed top-0 left-0 h-full w-[300px] bg-[#0f0f0f] z-[70] border-r border-[#d4af37]/30 shadow-2xl p-8 overflow-y-auto"
+            >
+               <div className='flex justify-between items-center mb-10'>
+                  <h2 className='text-2xl font-serif text-[#d4af37]'>FILTERS</h2>
+                  <FaTimes className='text-gray-400 cursor-pointer hover:text-white' onClick={() => setShowFilter(false)} size={20}/>
+               </div>
+
+               {/* Categories */}
+               <div className='mb-8'>
+                  <h3 className='text-xs font-bold text-gray-500 uppercase tracking-[0.2em] mb-4'>Category</h3>
+                  <div className='flex flex-col gap-3'>
+                    {['Men', 'Women', 'Kids'].map((cat) => (
+                      <label key={cat} className='flex items-center gap-3 cursor-pointer group'>
+                        <div className={`w-4 h-4 border border-gray-600 flex items-center justify-center transition-all ${category.includes(cat) ? 'bg-[#d4af37] border-[#d4af37]' : ''}`}>
+                           {category.includes(cat) && <FaCheck size={10} className='text-black' />}
+                        </div>
+                        <input type="checkbox" className='hidden' value={cat} onChange={toggleCategory} />
+                        <span className={`text-sm tracking-wide transition-all ${category.includes(cat) ? 'text-white font-bold' : 'text-gray-400 group-hover:text-white'}`}>{cat}</span>
+                      </label>
+                    ))}
+                  </div>
+               </div>
+
+               {/* Types */}
+               <div>
+                  <h3 className='text-xs font-bold text-gray-500 uppercase tracking-[0.2em] mb-4'>Collection Type</h3>
+                  <div className='flex flex-col gap-3'>
+                    {['TopWear', 'BottomWear', 'WinterWear'].map((sub) => (
+                      <label key={sub} className='flex items-center gap-3 cursor-pointer group'>
+                        <div className={`w-4 h-4 border border-gray-600 flex items-center justify-center transition-all ${subCategory.includes(sub) ? 'bg-[#d4af37] border-[#d4af37]' : ''}`}>
+                           {subCategory.includes(sub) && <FaCheck size={10} className='text-black' />}
+                        </div>
+                        <input type="checkbox" className='hidden' value={sub} onChange={toggleSubCategory} />
+                        <span className={`text-sm tracking-wide transition-all ${subCategory.includes(sub) ? 'text-white font-bold' : 'text-gray-400 group-hover:text-white'}`}>{sub}</span>
+                      </label>
+                    ))}
+                  </div>
+               </div>
+
+               <button 
+                  onClick={() => setShowFilter(false)}
+                  className='w-full mt-12 bg-white text-black font-bold uppercase tracking-[0.2em] py-4 text-xs hover:bg-[#d4af37] transition-colors'
+               >
+                  View Results
+               </button>
+
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
+
+      {/* --- FULL WIDTH PRODUCT GRID --- */}
+      <div className='max-w-[1600px] mx-auto px-4 sm:px-8 py-10'>
+         <motion.div 
+            layout
+            className='grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 md:gap-8'
+         >
+            {filterProduct.length > 0 ? (
+                filterProduct.map((item, index) => (
+                  <motion.div
+                    key={index}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ duration: 0.5, delay: index * 0.05 }}
+                  >
+                    <Card 
+                      id={item._id} 
+                      name={item.name} 
+                      images={[item.image1, item.image2, item.image3, item.image4]} 
+                      price={item.price} 
+                    />
+                  </motion.div>
+                ))
             ) : (
-              <p className="text-[#555] text-xl">No products found</p>
-            )
-          }
-        </div>
+                <div className='col-span-full h-[50vh] flex flex-col items-center justify-center text-gray-500'>
+                   <p className='text-xl font-serif'>No Pieces Found.</p>
+                   <p className='text-sm mt-2'>Try adjusting your filters.</p>
+                </div>
+            )}
+         </motion.div>
       </div>
 
     </div>

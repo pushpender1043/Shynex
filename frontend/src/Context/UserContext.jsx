@@ -28,7 +28,7 @@ function UserContext({children}) {
       withCredentials: true,
     });
     setUserData(result.data);
-    console.log("Current user:", result.data);
+    // console.log("Current user:", result.data);
   } catch (error) {
     // Only clear userData if it's an expected 401 (unauthorized)
     if (error.response?.status === 401) {

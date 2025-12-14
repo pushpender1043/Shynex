@@ -1,44 +1,47 @@
 import React from 'react'
 
-function NewLetterBox() {
-    const handleSubmit = (e) => {
-        e.preventDefault();
+const NewLetterBox = () => {
+
+    const onSubmitHandler = (event) => {
+        event.preventDefault(); 
     }
 
-    return (
-        <div className='w-full h-[40vh] bg-gradient-to-l from-[#0f1c2c] to-[#1f3a40] flex flex-col items-center justify-center gap-4 px-6 py-8'>
-            
-            {/* Heading */}
-            <p className='md:text-[30px] text-[20px] text-[white] font-semibold text-center'>
-                Subscribe now & get 20% off
-            </p>
-
-            {/* Subheading */}
-            <p className='md:text-[18px] text-[14px] text-center text-white font-medium px-4'>
-                Subscribe now and enjoy exclusive savings, special deals, and early access to new collections.
-            </p>
-
-            {/* Form */}
-            <form 
-                onSubmit={handleSubmit} 
-                className='w-full flex flex-col md:flex-row items-center justify-center gap-4 mt-4'
+  return (
+    // Theme: Black base with Gold Accents
+    <div className='text-center py-24 bg-[#050505] text-white border-t border-[#111]'>
+        
+        <p className='text-xs font-bold text-[#d4af37] uppercase tracking-[0.3em] mb-4'>
+            The Insider Club
+        </p>
+        
+        <p className='text-3xl sm:text-5xl font-serif font-medium tracking-wide text-white'>
+            Unlock the <span className='italic text-gray-500'>Exceptional</span>
+        </p>
+        
+        <p className='text-gray-400 mt-6 max-w-lg mx-auto text-sm font-light tracking-wide leading-relaxed'>
+            Join our elite list to receive private invitations, early access to new drops, and complimentary styling advice.
+        </p>
+        
+        <form onSubmit={onSubmitHandler} className='w-full sm:w-[400px] flex items-end gap-0 mx-auto mt-12 border-b border-gray-800 focus-within:border-[#d4af37] transition-colors duration-500 pb-2'>
+            <input 
+                className='w-full outline-none bg-transparent text-white px-2 py-2 placeholder:text-gray-600 font-serif text-lg tracking-wide' 
+                type="email" 
+                placeholder='Enter your email address' 
+                required
+            />
+            <button 
+                type='submit' 
+                className='text-[#d4af37] text-xs font-bold px-6 py-2 hover:text-white transition-all duration-300 uppercase tracking-[0.2em] mb-1'
             >
-                <input 
-                    type="email"
-                    className='placeholder-gray-400 bg-gray-100 w-full md:w-[400px] h-[45px] px-4 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-400 shadow-sm'
-                    placeholder='Enter Your Email' 
-                    required 
-                />
-                <button 
-                    type='submit'
-                    className='w-full md:w-auto px-6 py-3 bg-gray-700 hover:bg-gray-600 text-white rounded-lg shadow-md transition-colors duration-300'
-                >
-                    Subscribe
-                </button>
-            </form>
-
-        </div>
-    )
+                Join
+            </button>
+        </form>
+        
+        <p className='text-gray-600 text-[10px] mt-6 uppercase tracking-widest'>
+            No spam. Only Luxury.
+        </p>
+    </div>
+  )
 }
 
-export default NewLetterBox;
+export default NewLetterBox

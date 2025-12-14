@@ -33,7 +33,7 @@ const Registration=async(req,res)=>{
 
     }
     catch(error){
-        console.log("Signup Error");
+        console.log("Signup Error",error);
         return res.status(500).json({message:`Registration Error ${error}`})
 
     }
@@ -102,7 +102,7 @@ const googleLogin=async(req,res)=>{
 
     }
     catch(error){
-        console.log("google error")
+        console.log("google error",error)
          return res.status(500).json({message:`Login error ${error}`})
 
 

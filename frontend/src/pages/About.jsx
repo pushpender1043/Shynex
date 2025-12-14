@@ -1,97 +1,113 @@
-import React, { useState } from "react";
-import { FaShippingFast, FaTags, FaHeadset, FaGift, FaLeaf, FaSmile } from "react-icons/fa";
-import { motion } from "framer-motion";
-import imge from "../assets/back.webp";
-import bg from '../assets/about.png';
-import NewLetterBox from "../Component/NewLetterBox";
+import React from "react";
 import Title from "../Component/Title";
+import { FaShippingFast, FaTags, FaHeadset, FaLeaf } from "react-icons/fa";
+import { motion } from "framer-motion";
+import NewLetterBox from "../Component/NewLetterBox"; 
+import Footer from "../Component/Footer"; 
 
 const About = () => {
-  const baseCards = [
-    { icon: <FaShippingFast className="text-5xl text-[#c59a8a] mx-auto mb-4" />, title: "Fast Delivery", desc: "Get your favorite outfits quickly at your doorstep with our trusted delivery network." },
-    { icon: <FaTags className="text-5xl text-[#c59a8a] mx-auto mb-4" />, title: "Best Prices", desc: "Enjoy exclusive fashion deals and unbeatable prices every day." },
-    { icon: <FaHeadset className="text-5xl text-[#c59a8a] mx-auto mb-4" />, title: "24/7 Support", desc: "Our support team is available around the clock for your queries." },
-    { icon: <FaGift className="text-5xl text-[#c59a8a] mx-auto mb-4" />, title: "Special Rewards", desc: "Earn points and rewards with every purchase." },
-    { icon: <FaLeaf className="text-5xl text-[#c59a8a] mx-auto mb-4" />, title: "Eco Friendly", desc: "All our packaging is 100% recyclable and sustainable." },
-    { icon: <FaSmile className="text-5xl text-[#c59a8a] mx-auto mb-4" />, title: "Happy Customers", desc: "Over 50,000+ happy shoppers trust Shopverse." },
+  // ✅ Premium Image URL (Fashion Studio Vibe)
+  const aboutImage = "https://images.unsplash.com/photo-1441984904996-e0b6ba687e04?q=80&w=2070&auto=format&fit=crop";
+
+  const features = [
+    { icon: <FaShippingFast />, title: "Expedited Delivery", desc: "Your style reaches you before the trend fades." },
+    { icon: <FaTags />, title: "Exclusive Pricing", desc: "Luxury fashion curated at accessible points." },
+    { icon: <FaHeadset />, title: "Concierge Support", desc: "24/7 dedicated assistance for our elite members." },
+    { icon: <FaLeaf />, title: "Sustainability", desc: "Eco-conscious packaging for a better tomorrow." },
   ];
 
   return (
-    <div className="w-full min-h-screen bg-white pt-[80px] px-6 pb-12 overflow-hidden">
+    <div className="w-full min-h-screen bg-[#050505] pt-[120px] font-sans text-white">
       
-      {/* Top Section */}
-      <div className="flex flex-col md:flex-row items-center justify-center gap-10 md:gap-16">
-        <motion.div
-          className="w-full md:w-1/2 flex justify-center"
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.8 }}ijj
+      {/* --- PAGE HEADER --- */}
+      <motion.div 
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8 }}
+        className="text-center mb-16"
+      >
+         <h1 className="text-4xl md:text-6xl font-serif font-bold text-white tracking-widest">
+            THE <span className="text-[#d4af37]">LEGACY</span>
+         </h1>
+         <p className="text-gray-500 mt-3 text-xs uppercase tracking-[0.3em]">Crafting Elegance Since 2025</p>
+      </motion.div>
+
+      {/* --- STORY SECTION (New Structure) --- */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-10 flex flex-col lg:flex-row items-center gap-16 mb-32">
+        
+        {/* Left: Image with Gold Border Effect */}
+        <motion.div 
+          initial={{ x: -50, opacity: 0 }} 
+          whileInView={{ x: 0, opacity: 1 }} 
+          transition={{ duration: 0.8 }}
+          className="w-full lg:w-1/2 relative"
         >
-          <img
-            src={bg}
-            alt="Clothes"
-            className="h-120 rounded-2xl shadow-xl hover:scale-105 transition-transform duration-500 "
-            
+          <div className="absolute top-4 left-4 w-full h-full border-2 border-[#d4af37]/30 z-0"></div>
+          <img 
+            src={aboutImage} 
+            alt="About Shynex" 
+            className="w-full h-auto relative z-10 shadow-[0_20px_50px_rgba(0,0,0,0.5)] grayscale hover:grayscale-0 transition-all duration-700 ease-in-out" 
           />
         </motion.div>
 
-        <motion.div
-          className="w-full md:w-1/2 text-center md:text-left"
-          initial={{ x: 80, opacity: 0 }}
-          animate={{ x: 0, opacity: 1 }}
-          transition={{ duration: 0.8, delay: 0.3 }}
+        {/* Right: Content */}
+        <motion.div 
+           initial={{ x: 50, opacity: 0 }} 
+           whileInView={{ x: 0, opacity: 1 }} 
+           transition={{ duration: 0.8 }}
+           className="w-full lg:w-1/2 flex flex-col gap-8"
         >
-          <Title text1={"About "} text2={"Shopverse"} />
-          <p className="text-gray-700 leading-relaxed text-lg mt-4">
-            At <b className="text-[#c59a8a]">Shopverse</b>, we bring you the perfect blend of style, comfort, and affordability. From trendy outfits to timeless classics, we ensure your shopping experience is effortless and enjoyable.
+          <div>
+            <h3 className="text-2xl font-serif text-white mb-2">Our Philosophy</h3>
+            <div className="w-16 h-[2px] bg-[#d4af37]"></div>
+          </div>
+          
+          <p className="text-gray-400 text-lg leading-relaxed font-light">
+            Welcome to <b className="text-white">SHYNEX</b>. We are not just a brand; we are a movement in modern luxury. 
+            Born from a desire to bridge the gap between high-end aesthetics and everyday wearability, Shynex stands for quality, precision, and timeless style.
           </p>
+          <p className="text-gray-400 text-lg leading-relaxed font-light">
+            Each piece in our collection is curated with an obsession for detail. We believe that true luxury lies not in the price tag, but in the feeling of wearing something exceptional.
+          </p>
+          
+          {/* Quote Box */}
+          <div className="p-6 bg-[#111] border-l-2 border-[#d4af37]">
+            <p className="text-[#d4af37] italic font-serif text-xl">"To adorn the world with confidence and elegance."</p>
+          </div>
         </motion.div>
       </div>
 
-      {/* Why Choose Us Section - Scrollable */}
-      <div className="mt-24 text-center">
-        <Title text1={"Why "} text2={"Choose Us"} />
+      {/* --- WHY CHOOSE US (Minimal Grid) --- */}
+      <div className="bg-[#0a0a0a] py-24 border-t border-white/5">
+        <div className="max-w-7xl mx-auto px-4 sm:px-10">
+            <div className="flex flex-col md:flex-row justify-between items-end mb-16 border-b border-white/10 pb-6">
+                <Title text1={"WHY "} text2={"CHOOSE US"} />
+                <p className="text-gray-500 text-sm hidden md:block">Excellence in every detail.</p>
+            </div>
 
-        <div className="flex gap-8 mt-10 overflow-x-auto snap-x snap-mandatory px-4 hide-scrollbar">
-          {baseCards.map((card, i) => (
-            <motion.div
-              key={i}
-              className="min-w-[300px] max-w-[300px] h-[220px] bg-[#e0e0e0] rounded-2xl shadow-lg p-8 flex-shrink-0 snap-start hover:shadow-xl hover:-translate-y-2 transition duration-300"
-              initial={{ opacity: 0, y: 50 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: i * 0.1 }}
-              viewport={{ once: true }}
-            >
-              <div className="text-center">{card.icon}</div>
-              <h3 className="text-xl font-semibold text-gray-800 mb-3">{card.title}</h3>
-              <p className="text-gray-600">{card.desc}</p>
-            </motion.div>
-          ))}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+            {features.map((item, index) => (
+                <motion.div
+                key={index}
+                initial={{ y: 30, opacity: 0 }} 
+                whileInView={{ y: 0, opacity: 1 }} 
+                transition={{ delay: index * 0.1 }}
+                className="p-8 bg-[#050505] border border-white/5 hover:border-[#d4af37]/50 transition-all duration-500 group cursor-default hover:-translate-y-2"
+                >
+                <div className="text-3xl text-gray-600 group-hover:text-[#d4af37] mb-6 transition-colors duration-300">{item.icon}</div>
+                <h3 className="font-bold text-white text-lg mb-3 font-serif tracking-wide">{item.title}</h3>
+                <p className="text-gray-500 text-sm font-light leading-relaxed group-hover:text-gray-300 transition-colors">{item.desc}</p>
+                </motion.div>
+            ))}
+            </div>
         </div>
-        <p className="text-gray-500 mt-3 text-sm">Scroll → to explore more</p>
       </div>
-
-      {/* Newsletter Section */}
-      <motion.div
-        className="pt-[60px]"
-        initial={{ opacity: 0 }}
-        whileInView={{ opacity: 1 }}
-        transition={{ duration: 1 }}
-        viewport={{ once: true }}
-      >
+      
+      {/* --- FOOTER SECTION --- */}
+      <div className="py-0 border-t border-gray-900">
         <NewLetterBox />
-      </motion.div>
-
-      {/* Hide Scrollbar CSS */}
-      <style>{`
-        .hide-scrollbar::-webkit-scrollbar {
-          display: none;
-        }
-        .hide-scrollbar {
-          -ms-overflow-style: none;
-          scrollbar-width: none;
-        }
-      `}</style>
+      </div>
+      <Footer />
     </div>
   );
 };

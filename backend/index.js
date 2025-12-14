@@ -10,15 +10,23 @@ const productRoutes = require('./routes/productRoutes.js');
 const cartRoutes  = require('./routes/cartRoutes.js');
 const { orderRoutes } = require('./routes/orderRoutes.js');
 const { GoogleGenAI } = require('@google/genai');
+const path=require('path');
 
 
 
 dotenv.config();
 
+
 const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY }); 
 const model = "gemini-2.5-flash";
 
 let app=express();
+
+
+// const __dirname=path.resolve();
+
+
+
 let port=process.env.PORT||6000;
 app.use(cors({
     origin:["http://localhost:5173","http://localhost:5174"],
@@ -37,14 +45,6 @@ app.use("/api/order",orderRoutes)
 
 
 
-app.get('/',(req,res)=>{
-    res.send("Hello!")
-
-})
-
-
-
-// index.js (Replace your incomplete app.post block with this)
 
 app.post('/api/chatbot/message', async (req, res) => {
     try {
@@ -54,21 +54,19 @@ app.post('/api/chatbot/message', async (req, res) => {
             return res.status(400).json({ error: "Prompt is missing" });
         }
 
-        // 1. Format the history for the Gemini API
-        // Gemini expects role: 'user' or 'model' and content in 'parts'.
         const formattedHistory = history.map(msg => ({
             role: msg.sender === 'user' ? 'user' : 'model',
             parts: [{ text: msg.text }],
         }));
 
-        // 2. Combine history and the new prompt
+    
         const response = await ai.models.generateContent({
             model: model,
             contents: [...formattedHistory, { role: 'user', parts: [{ text: prompt }] }]
         });
 
         const aiReply = response.text;
-        res.json({ reply: aiReply }); // Send the final reply
+        res.json({ reply: aiReply }); 
 
     } catch (error) {
         console.error("Gemini API Error:", error.message);
@@ -76,8 +74,10 @@ app.post('/api/chatbot/message', async (req, res) => {
     }
 });
 
-
-// ... existing app.listen block ...
+// app.use(express.static(path.join(__dirname,"/frontend/dist")));
+// app.get("*",(req,res)=>{
+//     res.sendFile(path.resolve(__dirname,"frontend","dist","index.html"));
+// })
 
 app.listen(port,()=>{
     console.log(`Connected running on ${port}`);
