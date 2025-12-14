@@ -29,7 +29,11 @@ let app=express();
 
 let port=process.env.PORT||6000;
 app.use(cors({
-    origin:["http://localhost:5173","http://localhost:5174","https://shynex-6ejo.vercel.app"],
+    origin:["http://localhost:5173",
+        "http://localhost:5174",
+        "https://shynex-6ejo.vercel.app",
+        "https://shynex.onrender.com"
+    ],
     credentials:true
 }))
 app.use(express.json());
