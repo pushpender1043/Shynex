@@ -4,6 +4,8 @@ const Product = require('../model/productModel');
 
 const addProduct=async(req,res)=>{
     try{
+          console.log("FILES >>>", req.files);
+    console.log("BODY >>>", req.body);
        let {name,description,price,category,subCategory,sizes,bestSeller}=req.body
        let image1=await uploadOnCloudinary(req.files.image1[0].path);
        let image2=await uploadOnCloudinary(req.files.image2[0].path);
@@ -16,7 +18,7 @@ const addProduct=async(req,res)=>{
         category,
         subCategory,
         sizes:JSON.parse(sizes),
-        bestSeller: bestSeller==="true"?true:false,
+       bestSeller: bestSeller === true || bestSeller === "true",
         date:Date.now(),
         image1,
         image2,

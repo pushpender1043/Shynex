@@ -3,8 +3,6 @@ const User = require("../model/userModel");
 const dotenv=require('dotenv');
 dotenv.config();
 
-
-
 const Razorpay = require('razorpay');
 
 const currency='inr'

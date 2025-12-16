@@ -27,7 +27,7 @@ let app=express();
 
 
 
-let port=process.env.PORT||6000;
+let port=process.env.PORT||8000;
 app.use(cors({
     origin:["http://localhost:5173",
         "http://localhost:5174",

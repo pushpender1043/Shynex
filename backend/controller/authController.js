@@ -112,12 +112,15 @@ const googleLogin=async(req,res)=>{
 const adminLogin=async(req,res)=>{
     try{
         let {email,password}=req.body;
+        console.log("Entered:", email, password);
+console.log("Env:", process.env.ADMIN_EMAIL, process.env.ADMIN_PASSWORD);
+
         if(email==process.env.ADMIN_EMAIL && password==process.env.ADMIN_PASSWORD){
             let token=await genToken1(email);
             res.cookie("token",token,{
             httpOnly:true,
-            secure:true,
-            sameSite:"None",
+            secure:false,
+            sameSite:"Lax",
             maxage:1*24*60*60*1000
         });
         return res.status(200).json(token);
