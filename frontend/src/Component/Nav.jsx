@@ -11,7 +11,7 @@ import axios from 'axios';
 import { ShopDataContext } from '../Context/ShopContext.jsx';
 import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'react-toastify'; 
-import open from "../assets/open.mp3"; 
+import open from "../assets/audio/open.mp3"; 
 
 function Nav() {
     let { getCurrentUser, userData } = useContext(userDataContext);
