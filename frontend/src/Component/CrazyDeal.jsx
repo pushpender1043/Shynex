@@ -11,11 +11,11 @@ import logo6 from "../assets/logo6.jpg";
 // --- DATA ---
 const CRAZY_DEALS_DATA_BASE = [
     
-    { mainImage: {logo1}, dealText: 'The Gentleman’s Cut', link: '/collection', subText: "Suits & Blazers" },
-    { mainImage: {logo2}, dealText: 'Urban Sophistication', link: '/collection', subText: "Modern Fit" },
-    { mainImage: {logo3}, dealText: 'Weekend Luxe', link: '/collection', subText: "Relaxed Wear" },
-    { mainImage:{logo4}, dealText: 'Street Couture', link: '/collection/', subText: "Limited Drop" },
-    { mainImage: {logo6}, dealText: 'Royal Heritage', link: '/collection/', subText: "Wedding Series" },
+    { mainImage: logo1, dealText: 'The Gentleman’s Cut', link: '/collection', subText: "Suits & Blazers" },
+    { mainImage: logo2, dealText: 'Urban Sophistication', link: '/collection', subText: "Modern Fit" },
+    { mainImage: logo3, dealText: 'Weekend Luxe', link: '/collection', subText: "Relaxed Wear" },
+    { mainImage:logo4, dealText: 'Street Couture', link: '/collection/', subText: "Limited Drop" },
+    { mainImage: logo6, dealText: 'Royal Heritage', link: '/collection/', subText: "Wedding Series" },
 ];
 
 const ALL_DEALS = [
