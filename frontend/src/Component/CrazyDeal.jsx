@@ -2,14 +2,19 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FaArrowRight, FaStar } from "react-icons/fa"; 
 import { motion } from 'framer-motion';
+import logo1 from "../assets/logo1.jpeg";
+import logo2 from "../assets/logo2.jpeg";
+import logo3 from "../assets/logo3.jpeg";
+import logo4 from "../assets/logo4.jpeg";
+import logo6 from "../assets/logo6.jpeg";
 
 // --- DATA ---
 const CRAZY_DEALS_DATA_BASE = [
-    { mainImage: '/src/assets/logo1.jpg', dealText: 'The Gentleman’s Cut', link: '/collection', subText: "Suits & Blazers" },
-    { mainImage: '/src/assets/logo2.jpeg', dealText: 'Urban Sophistication', link: '/collection', subText: "Modern Fit" },
-    { mainImage: '/src/assets/logo3.jpg', dealText: 'Weekend Luxe', link: '/collection', subText: "Relaxed Wear" },
-    { mainImage: '/src/assets/logo4.webp', dealText: 'Street Couture', link: '/collection/', subText: "Limited Drop" },
-    { mainImage: '/src/assets/logo6.jpg', dealText: 'Royal Heritage', link: '/collection/', subText: "Wedding Series" },
+    { mainImage: {logo1}, dealText: 'The Gentleman’s Cut', link: '/collection', subText: "Suits & Blazers" },
+    { mainImage: {logo2}, dealText: 'Urban Sophistication', link: '/collection', subText: "Modern Fit" },
+    { mainImage: {logo3}, dealText: 'Weekend Luxe', link: '/collection', subText: "Relaxed Wear" },
+    { mainImage:{logo4}, dealText: 'Street Couture', link: '/collection/', subText: "Limited Drop" },
+    { mainImage: {logo6}, dealText: 'Royal Heritage', link: '/collection/', subText: "Wedding Series" },
 ];
 
 const ALL_DEALS = [
