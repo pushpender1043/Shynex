@@ -69,19 +69,38 @@ const login=async(req,res)=>{
 
 
 
-const logout=async(req,res)=>{
-    try{
-        res.clearCookie("token");
-         return res.status(200).json({message:"Log out Successful!"})
-    }
-    catch(error){
-        console.log("LogOut Error");
-         return res.status(400).json({message:`Logout error ${error}`})
+// const logout=async(req,res)=>{
+//     try{
+//         res.clearCookie("token");
+//          return res.status(200).json({message:"Log out Successful!"})
+//     }
+//     catch(error){
+//         console.log("LogOut Error");
+//          return res.status(400).json({message:`Logout error ${error}`})
 
 
-    }
+//     }
 
-}
+// }
+
+const logout = async (req, res) => {
+  try {
+    res.clearCookie("token", {
+      httpOnly: true,
+      secure: true,       // live me MUST
+      sameSite: "None",   // live me MUST
+    });
+
+    return res.status(200).json({
+      message: "Logout Successful!",
+    });
+  } catch (error) {
+    console.log("Logout Error:", error);
+    return res.status(400).json({
+      message: "Logout failed",
+    });
+  }
+};
 
 const googleLogin=async(req,res)=>{
     try{
