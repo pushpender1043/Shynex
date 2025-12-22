@@ -1,39 +1,59 @@
-const express = require("express");
-const dotenv = require("dotenv");
-const cors = require("cors");
-const cookieParser = require("cookie-parser");
-const { GoogleGenerativeAI } = require("@google/generative-ai");
+const express=require('express');
+const connectDB=require('./config/db');
+const dotenv=require('dotenv');
+const cookieParser = require('cookie-parser');
+const authRoutes = require('./routes/authRoute.js');
+const cors=require('cors');
+const User = require('./model/userModel');
+const  userRoutes  = require('./routes/userRoutes.js');
+const productRoutes = require('./routes/productRoutes.js');
+const cartRoutes  = require('./routes/cartRoutes.js');
+const { orderRoutes } = require('./routes/orderRoutes.js');
+// const { GoogleGenerativeAI } = require("@google/generative-ai");
+const path=require('path');
+
+
 
 dotenv.config();
 
-const app = express();
-const port = process.env.PORT || 8000;
+// const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+// // const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
+// const model = genAI.getGenerativeModel({
+//   model: "models/gemini-1.5-flash"
+// });
 
-// ✅ Middleware
+
+let app=express();
+
+
+// const __dirname=path.resolve();
+
+
+
+let port=process.env.PORT||8000;
 app.use(cors({
-  origin: [
-    "http://localhost:5173",
-    "http://localhost:5174",
-    "https://shynex-6ejo.vercel.app",
-    "https://shynex.onrender.com"
-  ],
-  credentials: true
-}));
-app.use(express.json({ limit: "1mb" }));
-app.use(cookieParser());
+    origin:["http://localhost:5173",
+        "http://localhost:5174",
+        "https://shynex-6ejo.vercel.app",
+        "https://shynex.onrender.com"
+    ],
+    credentials:true
+}))
+app.use(express.json());
 
-// ✅ Gemini setup (FINAL)
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-const model = genAI.getGenerativeModel({
-  model: "models/gemini-1.5-flash"
-});
+app.use(cookieParser())
 
-// ✅ Health check
-app.get("/", (req, res) => {
-  res.send("API is running");
-});
+app.use("/api/auth",authRoutes)
+app.use("/api/user",userRoutes)
+app.use("/api/product",productRoutes)
+app.use("/api/cart",cartRoutes)
+app.use("/api/order",orderRoutes)
 
-// ✅ Chatbot route
+
+
+
+app.get('/', (req, res) => res.send('API is running'));
+
 app.post("/api/chatbot/message", async (req, res) => {
   try {
     const { prompt } = req.body;
@@ -43,16 +63,13 @@ app.post("/api/chatbot/message", async (req, res) => {
     }
 
     const result = await model.generateContent(prompt);
+    const response = result.response;
+    const text = response.text();
 
-    if (!result || !result.response) {
-      return res.status(500).json({ reply: "AI did not respond" });
-    }
-
-    const text = result.response.text();
     res.status(200).json({ reply: text });
 
   } catch (error) {
-    console.error("🔥 Gemini Error:", error);
+    console.error("Gemini LIVE Error:", error);
     res.status(500).json({
       error: "Gemini API failed",
       details: error.message
@@ -60,7 +77,15 @@ app.post("/api/chatbot/message", async (req, res) => {
   }
 });
 
-// ✅ Server start
-app.listen(port, () => {
-  console.log(`Server running on port ${port}`);
-});
+
+
+// app.use(express.static(path.join(__dirname,"/frontend/dist")));
+// app.get("*",(req,res)=>{
+//     res.sendFile(path.resolve(__dirname,"frontend","dist","index.html"));
+// })
+
+app.listen(port,()=>{
+    console.log(`Connected running on ${port}`);
+    connectDB();
+})
+

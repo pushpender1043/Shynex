@@ -5,7 +5,7 @@ const {Registration,login,logout, googleLogin, adminLogin}=require('../controlle
 const authRoutes=express.Router();
 authRoutes.post('/registration',Registration);
 authRoutes.post('/login',login);
-authRoutes.get('/logout',logout);
+authRoutes.post('/logout',logout);
 authRoutes.post('/googlelogin',googleLogin);
 authRoutes.post('/adminlogin',adminLogin);
 
