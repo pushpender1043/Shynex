@@ -18,7 +18,7 @@ dotenv.config();
 
 
 const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY }); 
-const model = "gemini-2.5-flash";
+const model = "gemini-1.5-flash";
 
 let app=express();
 
