@@ -9,16 +9,15 @@ const  userRoutes  = require('./routes/userRoutes.js');
 const productRoutes = require('./routes/productRoutes.js');
 const cartRoutes  = require('./routes/cartRoutes.js');
 const { orderRoutes } = require('./routes/orderRoutes.js');
-const { GoogleGenAI } = require('@google/genai');
+const { GoogleGenerativeAI } = require("@google/generative-ai");
 const path=require('path');
 
 
 
 dotenv.config();
 
-
-const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY }); 
-const model = "gemini-1.5-flash";
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
 let app=express();
 
@@ -36,7 +35,8 @@ app.use(cors({
     ],
     credentials:true
 }))
-app.use(express.json());
+app.use(express.json({ limit: "1mb" }));
+
 app.use(cookieParser())
 
 app.use("/api/auth",authRoutes)
@@ -50,40 +50,29 @@ app.use("/api/order",orderRoutes)
 
 app.get('/', (req, res) => res.send('API is running'));
 
-app.post('/api/chatbot/message', async (req, res) => {
+app.post("/api/chatbot/message", async (req, res) => {
   try {
-    const { prompt, history } = req.body;
+    const { prompt } = req.body;
 
     if (!prompt) {
       return res.status(400).json({ error: "Prompt is missing" });
     }
 
-    const formattedHistory = Array.isArray(history)
-      ? history.map(msg => ({
-          role: msg.sender === 'user' ? 'user' : 'model',
-          parts: [{ text: msg.text }],
-        }))
-      : [];
+    const result = await model.generateContent(prompt);
+    const response = result.response;
+    const text = response.text();
 
-    const response = await ai.models.generateContent({
-      model: model,
-      contents: [
-        ...formattedHistory,
-        { role: 'user', parts: [{ text: prompt }] }
-      ]
-    });
-
-    const aiReply =
-      response?.candidates?.[0]?.content?.parts?.[0]?.text ||
-      "Sorry, I couldn't generate a response.";
-
-    res.json({ reply: aiReply });
+    res.status(200).json({ reply: text });
 
   } catch (error) {
-    console.error("Gemini API Error:", error);
-    res.status(500).json({ error: "Failed to generate AI response." });
+    console.error("Gemini LIVE Error:", error);
+    res.status(500).json({
+      error: "Gemini API failed",
+      details: error.message
+    });
   }
 });
+
 
 
 // app.use(express.static(path.join(__dirname,"/frontend/dist")));

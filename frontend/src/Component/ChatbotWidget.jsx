@@ -36,7 +36,9 @@ function ChatWidget() {
         setLoading(true);
 
         try {
-            const response = await axios.post(BACKEND_URL, { prompt: text, history: [...messages, newUserMessage] });
+            const response = await 
+            axios.post(BACKEND_URL, { prompt: text });
+
             setMessages(prev => [...prev, { sender: 'ai', text: response.data.reply }]);
         } catch (error) {
             setMessages(prev => [...prev, { sender: 'ai', text: "I am currently offline. Please contact support via email." }]);
