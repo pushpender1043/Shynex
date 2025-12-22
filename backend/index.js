@@ -51,32 +51,40 @@ app.use("/api/order",orderRoutes)
 app.get('/', (req, res) => res.send('API is running'));
 
 app.post('/api/chatbot/message', async (req, res) => {
-    try {
-        const { prompt, history } = req.body;
-        
-        if (!prompt) {
-            return res.status(400).json({ error: "Prompt is missing" });
-        }
+  try {
+    const { prompt, history } = req.body;
 
-        const formattedHistory = history.map(msg => ({
-            role: msg.sender === 'user' ? 'user' : 'model',
-            parts: [{ text: msg.text }],
-        }));
-
-    
-        const response = await ai.models.generateContent({
-            model: model,
-            contents: [...formattedHistory, { role: 'user', parts: [{ text: prompt }] }]
-        });
-
-        const aiReply = response.text;
-        res.json({ reply: aiReply }); 
-
-    } catch (error) {
-        console.error("Gemini API Error:", error.message);
-        res.status(500).json({ error: "Failed to generate AI response." });
+    if (!prompt) {
+      return res.status(400).json({ error: "Prompt is missing" });
     }
+
+    const formattedHistory = Array.isArray(history)
+      ? history.map(msg => ({
+          role: msg.sender === 'user' ? 'user' : 'model',
+          parts: [{ text: msg.text }],
+        }))
+      : [];
+
+    const response = await ai.models.generateContent({
+      model: model,
+      contents: [
+        ...formattedHistory,
+        { role: 'user', parts: [{ text: prompt }] }
+      ]
+    });
+
+    const aiReply =
+      response?.candidates?.[0]?.content?.parts?.[0]?.text ||
+      "Sorry, I couldn't generate a response.";
+
+    res.json({ reply: aiReply });
+
+  } catch (error) {
+    console.error("Gemini API Error:", error);
+    res.status(500).json({ error: "Failed to generate AI response." });
+  }
 });
+
 
 // app.use(express.static(path.join(__dirname,"/frontend/dist")));
 // app.get("*",(req,res)=>{
