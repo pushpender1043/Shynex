@@ -9,21 +9,19 @@ const  userRoutes  = require('./routes/userRoutes.js');
 const productRoutes = require('./routes/productRoutes.js');
 const cartRoutes  = require('./routes/cartRoutes.js');
 const { orderRoutes } = require('./routes/orderRoutes.js');
-// const { GoogleGenerativeAI } = require("@google/generative-ai");
+const { GoogleGenerativeAI } = require("@google/generative-ai");
 const path=require('path');
 
 
 
 dotenv.config();
 
-// const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-// // const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
-// const model = genAI.getGenerativeModel({
-//   model: "models/gemini-1.5-flash"
-// });
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
-
-let app=express();
+const model = genAI.getGenerativeModel({
+  model: "models/gemini-1.5-flash" // ✅ stable & supported
+});
+let app=express();1
 
 
 // const __dirname=path.resolve();
@@ -41,7 +39,7 @@ app.use(cors({
 }))
 app.use(express.json());
 
-app.use(cookieParser())
+app.use(cookieParser());
 
 app.use("/api/auth",authRoutes)
 app.use("/api/user",userRoutes)
@@ -63,15 +61,20 @@ app.post("/api/chatbot/message", async (req, res) => {
     }
 
     const result = await model.generateContent(prompt);
-    const response = result.response;
-    const text = response.text();
 
-    res.status(200).json({ reply: text });
+    if (!result || !result.response) {
+      return res.status(500).json({ error: "No response from Gemini" });
+    }
+
+    const text = result.response.text();
+
+    return res.status(200).json({ reply: text });
 
   } catch (error) {
-    console.error("Gemini LIVE Error:", error);
-    res.status(500).json({
-      error: "Gemini API failed",
+    console.error("🔥 Gemini ERROR:", error.message);
+
+    return res.status(500).json({
+      error: "Gemini failed",
       details: error.message
     });
   }
