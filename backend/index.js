@@ -14,16 +14,17 @@ const path=require('path');
 
 
 
-dotenv.config()
+dotenv.config();
 
 // Ye line add karo check karne ke liye (Key print mat karwana security ke liye)
 console.log("🔑 API Key Status:", process.env.GEMINI_API_KEY ? "Loaded ✅" : "Missing ❌");
 
 
+
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
 const model = genAI.getGenerativeModel({
-  model: "gemini-1.5-flash"
+  model: "gemini-2.5-flash"
 });
 
 
