@@ -31,14 +31,25 @@ function Nav() {
     let navigate = useNavigate();
     let location = useLocation(); 
 
-    const handleLogOut = async () => {
-        try {
-            await axios.post(serverUrl + '/api/auth/logout', { withCredentials: true });
-            getCurrentUser();
-        } catch (error) {
-            console.log(error);
-        }
-    };
+  const handleLogOut = async () => {
+    try {
+        // Change is here 👇
+        // Pehla argument: URL
+        // Dusra argument: {} (Empty body/data)
+        // Teesra argument: { withCredentials: true } (Config)
+        
+        await axios.post(serverUrl + '/api/auth/logout', {}, { withCredentials: true });
+        
+        // State update aur Navigation
+        getCurrentUser(); // User data refresh/null karega
+        navigate('/login'); // Logout ke baad login page par bhej do (Optional but recommended)
+        toast.success("Logged out successfully"); // User ko feedback do
+        
+    } catch (error) {
+        console.log(error);
+        toast.error("Logout failed");
+    }
+};
 
     const controlNavbar = () => {
         if (window.scrollY > lastScrollY) { setShowNavbar(false); setIsMegaMenuOpen(false); }
