@@ -19,9 +19,13 @@ dotenv.config();
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
 const model = genAI.getGenerativeModel({
-  model: "models/gemini-1.5-flash" // ✅ stable & supported
+  model: "gemini-pro"
 });
-let app=express();1
+
+
+
+let app = express();
+
 
 
 // const __dirname=path.resolve();
